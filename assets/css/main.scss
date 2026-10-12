@@ -1,0 +1,89 @@
+---
+---
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+@import "minimal-mistakes";
+
+:root {
+  --bi-ink: #17191d;
+  --bi-muted: #68707b;
+  --bi-line: #e5e7eb;
+  --bi-paper: #ffffff;
+  --bi-soft: #f5f6f7;
+  --bi-accent: #2463eb;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bi-paper); }
+.masthead { border-bottom: 1px solid var(--bi-line); }
+.greedy-nav a.site-title { font-weight: 800; letter-spacing: -.04em; }
+.page__content { font-size: 1rem; }
+.page__content h2 { margin-top: 2em; }
+.bi-hero {
+  margin: 1rem 0 4rem;
+  padding: clamp(2rem, 7vw, 5.5rem);
+  border-radius: 1.25rem;
+  color: #fff;
+  background: radial-gradient(ellipse at 85% 10%, #35435b 0, transparent 35%), linear-gradient(130deg, #17191d, #252b34);
+}
+.bi-eyebrow { font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--bi-muted); margin: 0 0 .7rem; }
+.bi-hero .bi-eyebrow { color: #b7c3d4; }
+.bi-hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); line-height: .98; letter-spacing: -.065em; color: #fff; margin: .3rem 0 1.2rem; }
+.bi-lead { font-size: clamp(1.05rem, 2vw, 1.35rem); max-width: 42rem; color: #cbd2dc; line-height: 1.65; }
+.bi-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.8rem 0 1.2rem; }
+.bi-button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .8rem 1.1rem; border-radius: .55rem; font-weight: 750; text-decoration: none !important; }
+.bi-button-primary { background: #fff; color: #17191d !important; border: 1px solid #fff; }
+.bi-button-primary:hover { background: #e9edf3; }
+.bi-button-secondary { border: 1px solid #aeb6c2; color: inherit !important; }
+.bi-hero .bi-button-secondary { color: #fff !important; border-color: #687384; }
+.bi-hero-note { color: #9da8b7; font-size: .85rem; margin-top: 1.5rem; }
+.bi-section { margin: 4rem 0; }
+.bi-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1.4rem; }
+.bi-section-heading h2 { margin: 0; letter-spacing: -.04em; }
+.bi-section-heading > a { white-space: nowrap; font-weight: 700; }
+.bi-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin: 1.4rem 0; }
+.bi-card { border: 1px solid var(--bi-line); border-radius: .9rem; overflow: hidden; background: #fff; display: flex; flex-direction: column; min-width: 0; }
+.bi-card-image-link { display: block; text-decoration: none !important; }
+.bi-card-image, .bi-card-placeholder { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.bi-card-placeholder, .bi-product-placeholder { background: linear-gradient(135deg, #e9edf2, #d8dee7); color: #202733; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 1.2rem; box-sizing: border-box; }
+.bi-card-placeholder span, .bi-product-placeholder span { font-size: .65rem; font-weight: 800; letter-spacing: .13em; }
+.bi-card-placeholder strong, .bi-product-placeholder strong { font-size: clamp(1.4rem, 2.5vw, 2.2rem); line-height: 1.05; letter-spacing: -.05em; }
+.bi-card-body { padding: 1.1rem; display: flex; flex-direction: column; flex: 1; }
+.bi-card-kicker { text-transform: uppercase; letter-spacing: .1em; font-size: .68rem; color: var(--bi-muted); font-weight: 800; margin: 0 0 .5rem; }
+.bi-card h3 { font-size: 1.2rem; margin: 0 0 .55rem; letter-spacing: -.025em; }
+.bi-card h3 a { color: var(--bi-ink); text-decoration: none; }
+.bi-card-body > p:not(.bi-card-kicker) { color: var(--bi-muted); font-size: .9rem; line-height: 1.6; }
+.bi-card-link { font-weight: 750; font-size: .88rem; margin-top: auto; }
+.bi-product-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: 1rem; }
+.bi-product-card-bottom strong { font-size: 1.05rem; }
+.bi-shop-section { padding: 2rem; border-radius: 1.2rem; background: var(--bi-soft); }
+.bi-small-note { font-size: .78rem; color: var(--bi-muted); }
+.bi-post-list { border-top: 1px solid var(--bi-line); }
+.bi-post-row { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 1.2rem; padding: 1.4rem 0; border-bottom: 1px solid var(--bi-line); }
+.bi-post-row time { color: var(--bi-muted); font-size: .8rem; padding-top: .3rem; }
+.bi-post-row h2, .bi-post-row h3 { margin: 0 0 .4rem; font-size: 1.2rem; }
+.bi-post-row h2 a, .bi-post-row h3 a { text-decoration: none; }
+.bi-post-row p { color: var(--bi-muted); margin: 0; font-size: .9rem; }
+.bi-about-strip { margin: 4rem 0 2rem; padding: 2rem; border: 1px solid var(--bi-line); border-radius: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.bi-about-strip h2 { margin: 0; max-width: 40rem; letter-spacing: -.04em; }
+.bi-product-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, .8fr); gap: 2rem; align-items: start; }
+.bi-product-image, .bi-product-placeholder { width: 100%; border-radius: .8rem; }
+.bi-product-image { height: auto; }
+.bi-product-placeholder { min-height: 300px; margin-bottom: 1.5rem; }
+.bi-product-buy { border: 1px solid var(--bi-line); border-radius: .9rem; padding: 1.3rem; position: sticky; top: 2rem; }
+.bi-product-buy h2 { font-size: 1.5rem; line-height: 1.15; margin: .3rem 0 .8rem; }
+.bi-price { font-size: 1.8rem; font-weight: 800; letter-spacing: -.04em; margin: .8rem 0; }
+.bi-buy-button { width: 100%; box-sizing: border-box; margin: .8rem 0; background: var(--bi-ink); border-color: var(--bi-ink); color: #fff !important; }
+.bi-buy-button:hover { background: #343b46; color: #fff !important; }
+.bi-text-link { display: block; margin: .6rem 0; font-weight: 700; }
+.bi-shop-filter-note { padding: 1rem; background: var(--bi-soft); border-radius: .6rem; color: var(--bi-muted); }
+@media (max-width: 800px) {
+  .bi-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bi-product-layout { grid-template-columns: 1fr; }
+  .bi-product-buy { position: static; }
+}
+@media (max-width: 560px) {
+  .bi-card-grid { grid-template-columns: 1fr; }
+  .bi-section-heading, .bi-about-strip { align-items: flex-start; flex-direction: column; }
+  .bi-post-row { grid-template-columns: 1fr; gap: .35rem; }
+  .bi-hero { border-radius: .8rem; }
+}

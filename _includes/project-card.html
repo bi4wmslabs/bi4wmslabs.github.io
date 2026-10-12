@@ -1,0 +1,12 @@
+<article class="bi-card">
+  <a class="bi-card-image-link" href="{{ item.url | relative_url }}" aria-label="View {{ item.title | escape }}">
+    {% if item.image %}<img class="bi-card-image" src="{{ item.image | relative_url }}" alt="{{ item.title | escape }}" loading="lazy">
+    {% else %}<div class="bi-card-placeholder"><span>{{ item.category | default: "OPEN HARDWARE" | upcase }}</span><strong>{{ item.short_name | default: item.title }}</strong></div>{% endif %}
+  </a>
+  <div class="bi-card-body">
+    <p class="bi-card-kicker">{{ item.category | default: "Project" | replace: "-", " " }}</p>
+    <h3><a href="{{ item.url | relative_url }}">{{ item.title }}</a></h3>
+    <p>{{ item.excerpt | default: item.description | strip_html | truncate: 145 }}</p>
+    <a class="bi-card-link" href="{{ item.url | relative_url }}">Explore project →</a>
+  </div>
+</article>
