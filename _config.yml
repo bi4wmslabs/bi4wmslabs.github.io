@@ -1,0 +1,76 @@
+title: "bi4wms"
+email: ""
+description: "Open hardware projects, practical engineering notes, and carefully designed electronics."
+url: "https://bi4wms.github.io"
+baseurl: ""
+repository: "bi4wms/bi4wms.github.io"
+minimal_mistakes_skin: "default"
+locale: "en-US"
+timezone: "Asia/Shanghai"
+search: true
+breadcrumbs: true
+words_per_minute: 200
+logo: "/assets/images/bi4wms-mark.svg"
+masthead_title: "bi4wms"
+subtitle: "Open Hardware Lab"
+include:
+  - _pages
+markdown: kramdown
+remote_theme: "mmistakes/minimal-mistakes@4.28.1"
+plugins:
+  - jekyll-remote-theme
+  - jekyll-include-cache
+  - jekyll-seo-tag
+  - jekyll-sitemap
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+  products:
+    output: true
+    permalink: /shop/:name/
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: false
+      read_time: true
+      comments: false
+      share: true
+  - scope:
+      path: ""
+      type: projects
+    values:
+      layout: single
+      author_profile: false
+      toc: true
+  - scope:
+      path: ""
+      type: products
+    values:
+      layout: product
+      author_profile: false
+      toc: false
+author:
+  name: "bi4wms"
+  bio: "Hardware engineering, open-source projects, and practical build notes."
+  location: "Independent hardware lab"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/bi4wms"
+    - label: "Blog"
+      icon: "fas fa-fw fa-globe"
+      url: "https://bi4wms.github.io"
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/bi4wms"
+    - label: "Contact"
+      icon: "fas fa-fw fa-envelope"
+      url: "mailto:YOUR_EMAIL@example.com"
+atom_feed:
+  hide: true
