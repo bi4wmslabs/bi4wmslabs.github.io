@@ -1,12 +1,12 @@
 <article class="bi-card">
   <a class="bi-card-image-link" href="{{ item.url | relative_url }}" aria-label="View {{ item.title | escape }}">
     {% if item.image %}<img class="bi-card-image" src="{{ item.image | relative_url }}" alt="{{ item.title | escape }}" loading="lazy">
-    {% else %}<div class="bi-card-placeholder"><span>{{ item.category | default: "OPEN HARDWARE" | upcase }}</span><strong>{{ item.short_name | default: item.title }}</strong></div>{% endif %}
+    {% else %}<div class="bi-card-placeholder"><span>{{ item.category | default: "OPEN HARDWARE" | upcase }}</span><strong{% if item.short_name_zh %} data-zh="{{ item.short_name_zh }}"{% endif %}>{{ item.short_name | default: item.title }}</strong></div>{% endif %}
   </a>
   <div class="bi-card-body">
-    <p class="bi-card-kicker">{{ item.category | default: "Project" | replace: "-", " " }}</p>
-    <h3><a href="{{ item.url | relative_url }}">{{ item.title }}</a></h3>
-    <p>{{ item.excerpt | default: item.description | strip_html | truncate: 145 }}</p>
-    <a class="bi-card-link" href="{{ item.url | relative_url }}">Explore project →</a>
+    <p class="bi-card-kicker"{% if item.category_zh %} data-zh="{{ item.category_zh }}"{% endif %}>{{ item.category | default: "Project" | replace: "-", " " }}</p>
+    <h3><a href="{{ item.url | relative_url }}"{% if item.title_zh %} data-zh="{{ item.title_zh }}"{% endif %}>{{ item.title }}</a></h3>
+    <p{% if item.excerpt_zh %} data-zh="{{ item.excerpt_zh }}"{% endif %}>{{ item.excerpt | default: item.description | strip_html | truncate: 145 }}</p>
+    <a class="bi-card-link" href="{{ item.url | relative_url }}" data-zh="查看项目 →">Explore project →</a>
   </div>
 </article>

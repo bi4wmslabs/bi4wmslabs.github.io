@@ -1,15 +1,15 @@
 <article class="bi-card bi-product-card">
   <a class="bi-card-image-link" href="{{ item.url | relative_url }}" aria-label="View {{ item.title | escape }}">
     {% if item.image %}<img class="bi-card-image" src="{{ item.image | relative_url }}" alt="{{ item.title | escape }}" loading="lazy">
-    {% else %}<div class="bi-card-placeholder"><span>{{ item.category | default: "HARDWARE" | upcase }}</span><strong>{{ item.short_name | default: item.title }}</strong></div>{% endif %}
+    {% else %}<div class="bi-card-placeholder"><span>{{ item.category | default: "HARDWARE" | upcase }}</span><strong{% if item.short_name_zh %} data-zh="{{ item.short_name_zh }}"{% endif %}>{{ item.short_name | default: item.title }}</strong></div>{% endif %}
   </a>
   <div class="bi-card-body">
-    <p class="bi-card-kicker">{{ item.category | default: "Hardware" | replace: "-", " " }}</p>
-    <h3><a href="{{ item.url | relative_url }}">{{ item.title }}</a></h3>
-    <p>{{ item.summary | default: item.excerpt | strip_html | truncate: 125 }}</p>
+    <p class="bi-card-kicker"{% if item.category_zh %} data-zh="{{ item.category_zh }}"{% endif %}>{{ item.category | default: "Hardware" | replace: "-", " " }}</p>
+    <h3><a href="{{ item.url | relative_url }}"{% if item.title_zh %} data-zh="{{ item.title_zh }}"{% endif %}>{{ item.title }}</a></h3>
+    <p{% if item.summary_zh %} data-zh="{{ item.summary_zh }}"{% endif %}>{{ item.summary | default: item.excerpt | strip_html | truncate: 125 }}</p>
     <div class="bi-product-card-bottom">
       <strong>{{ item.price | default: "Price on request" }}</strong>
-      <a class="bi-card-link" href="{{ item.url | relative_url }}">Details →</a>
+      <a class="bi-card-link" href="{{ item.url | relative_url }}" data-zh="详情 →">Details →</a>
     </div>
   </div>
 </article>

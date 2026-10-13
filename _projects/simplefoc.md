@@ -5,6 +5,10 @@ category: "Motor Control"
 date: 2026-10-01
 featured: true
 excerpt: "A compact motor-control board concept for experimenting with open-source FOC and small BLDC motors."
+title_zh: "SimpleFOC控制器"
+short_name_zh: "控制器"
+category_zh: "电机控制"
+excerpt_zh: "紧凑电机控制器。"
 github: "https://github.com/bi4wms/SimpleFOC"
 ---
 

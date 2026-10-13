@@ -5,6 +5,10 @@ category: "Desktop Electronics"
 date: 2026-10-02
 featured: true
 excerpt: "A carefully assembled word-clock project combining custom electronics, a display panel, and open firmware."
+title_zh: "文字时钟"
+short_name_zh: "文字时钟"
+category_zh: "桌面电子"
+excerpt_zh: "精心组装的文字时钟项目，融合定制电路、显示面板与开源固件。"
 ---
 
 ## Overview

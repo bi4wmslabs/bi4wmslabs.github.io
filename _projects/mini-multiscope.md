@@ -5,6 +5,10 @@ category: "Test & Measurement"
 date: 2026-10-03
 featured: true
 excerpt: "A compact STM32-based hardware project for exploring signal acquisition and measurement."
+title_zh: "多功能表"
+short_name_zh: "多用表"
+category_zh: "仪器仪表"
+excerpt_zh: "紧凑示波器表"
 github: "https://github.com/bi4wms/MiniMultiScope"
 ---
 
