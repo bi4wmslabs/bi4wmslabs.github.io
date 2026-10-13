@@ -1,10 +1,14 @@
 ---
 title: "project test"
 title_zh: "项目测试"
+short_name: "project test"
+short_name_zh: "项目"
 date: 2026-10-15
 categories: "Motor Control"
+featured: true
 excerpt: "English one-line summary."
 excerpt_zh: "中文一句话摘要。"
+
 ---
 
 <div class="lang-zh">
