@@ -1,263 +1,278 @@
-/* ==========================================================================
-   bi4wms — 中 / 英 切换（零改动版 v3）
-   --------------------------------------------------------------------------
-   位置：assets/js/i18n.js
-   引入：_includes/head/custom.html
+/* =========================================================
+   bi4wms · 中英切换引擎  v2
+   ---------------------------------------------------------
+   放到：assets/js/i18n.js
+   引入：_includes/head/custom.html 里加一行
+         <script src="/assets/js/i18n.js"></script>
 
-   三种生效方式，自动识别：
-     ① [data-zh="中文"]          元素级，最精准，优先使用
-     ② .lang-zh / .lang-en       区块级，正文写两份时用
-     ③ 字典匹配                  无需改 HTML，自动翻界面文案
+   v2 相比 v1 的关键改动：
+   ★ 不再依赖外部 CSS 做正文显隐 —— JS 自己注入 style 并直接控制 display
+     （解决"CSS 没加载 / class 被 kramdown 剥离导致中英文同时显示"的问题）
 
-   特点：切回英文是【原文还原】，不是二次翻译，无翻译腔残留
-   ========================================================================== */
+   它做五件事：
+     1) 自己注入一段最小 CSS，防首屏闪烁
+     2) 扫描正文双语块（哨兵 span 标记），打 data-bi-lang 并直接控制显隐
+     3) 处理 [data-zh]        → 卡片标题 / 摘要等短字段
+     4) 处理 [data-zh-title]  → 页面大标题 <h1>
+     5) 内置 DICT 兜底       → 不改卡片模板也能切现有内容
 
+   原则：切回 EN 是「原文还原」，不是二次翻译。
+   ========================================================= */
 (function () {
   "use strict";
 
-  var KEY = "bi4wms-lang";
+  var STORAGE_KEY = "bi4wms-lang";
+  var root = document.documentElement;
 
-  /* ======================================================================
-     界面字典 —— 已覆盖你首页当前出现的全部英文文案
-     加词只改这里，不用动 HTML
-     ====================================================================== */
-  var DICT = {
-    /* ---- Hero ---- */
-    "OPEN HARDWARE · ENGINEERING · SMALL-BATCH PRODUCTS": "开源硬件 · 工程实践 · 小批量产品",
-    "Better Hardware": "更好的硬件",
-    "for Open Source.": "为开源而生。",
-    "Thoughtfully designed electronics, practical engineering notes, and hardware you can build on.":
-      "精心设计的电子产品、实用的工程笔记，以及可以持续构建的硬件。",
-    "Explore projects": "浏览项目",
-    "Shop hardware": "硬件商店",
-    "Designed with care. Documented in the open.": "用心设计，过程公开。",
+  /* ========== 1. 定语言（head 阶段就定，防闪） ========== */
+  var saved = null;
+  try {
+    saved = localStorage.getItem(STORAGE_KEY);
+  } catch (e) {
+    saved = null;
+  }
+  if (saved !== "zh" && saved !== "en") {
+    var nav = navigator.language || navigator.userLanguage || "";
+    saved = nav.toLowerCase().indexOf("zh") === 0 ? "zh" : "en";
+  }
+  root.setAttribute("data-lang", saved);
+  root.setAttribute("lang", saved === "zh" ? "zh-CN" : "en");
 
-    /* ---- 精选项目 ---- */
-    "BUILD SOMETHING USEFUL": "动手做出有用的东西",
-    "Featured projects": "精选项目",
-    "All projects →": "全部项目 →",
-    "Explore project →": "查看项目 →",
+  /* ========== 2. 注入最小 CSS（不依赖外部文件） ========== */
+  /* 只管正文块的显隐与哨兵隐藏；按钮美化仍由外部 CSS 负责 */
+  var style = document.createElement("style");
+  style.id = "bi-i18n-core";
+  style.textContent =
+    '[data-bi-lang="zh"]{display:none!important}' +
+    'html[data-lang="zh"] [data-bi-lang="en"]{display:none!important}' +
+    'html[data-lang="zh"] [data-bi-lang="zh"]{display:block!important}' +
+    '.bi-lang-mark{display:none!important}';
+  (document.head || document.documentElement).appendChild(style);
 
-    /* ---- 硬件商店 ---- */
-    "DESIGN FILES & PHYSICAL HARDWARE": "设计文件与实体硬件",
-    "Hardware shop": "硬件商店",
-    "Visit shop →": "前往商店 →",
-    "Details →": "详情 →",
-    "Price on request": "价格面议",
-    "Purchases are completed through the linked checkout provider. This site does not collect or store payment details.":
-      "购买流程由外部结算平台完成，本站不收集或保存任何支付信息。",
+  /* ========== 3. DICT 兜底（英文 ⇄ 中文，双向） ========== */
+  var DICT = [
+    /* --- 项目 --- */
+    ["SimpleFOC Controller", "SimpleFOC 控制器"],
+    ["Word Clock", "文字时钟"],
+    ["MiniMultiScope", "MiniMultiScope 迷你示波器"],
+    ["uPower", "uPower 电源"],
 
-    /* ---- 工程笔记 ---- */
-    "FROM THE WORKBENCH": "来自工作台",
-    "Engineering notes": "工程笔记",
-    "All notes →": "全部笔记 →",
+    /* --- 商品 --- */
+    ["SimpleFOC Controller Design Files", "SimpleFOC 控制器设计文件"],
+    ["Word Clock DIY Kit", "文字时钟 DIY 套件"],
+    ["Word Clock — Assembled", "文字时钟 — 成品"],
+    ["Word Clock - Assembled", "文字时钟 — 成品"],
+    ["uPower DIY Kit", "uPower DIY 套件"],
 
-    /* ---- 关于 ---- */
-    "INDEPENDENT HARDWARE ENGINEERING": "独立硬件工程",
-    "Open designs. Useful documentation. Real hardware.": "开放的设计、有用的文档、真实的硬件。",
-    "About bi4wms →": "关于 bi4wms →",
+    /* --- 摘要 / 简介 --- */
+    ["A compact motor-control board concept for experimenting with open-source FOC and small BLDC motors.",
+     "用于试验开源 FOC 与小型无刷电机的紧凑型电机控制板方案。"],
+    ["A carefully assembled word-clock project combining custom electronics, a display panel, and open firmware.",
+     "精心组装的文字时钟项目，融合定制电路、显示面板与开源固件。"],
+    ["A compact STM32-based hardware project for exploring signal acquisition and measurement.",
+     "基于 STM32 的紧凑型硬件项目，用于探索信号采集与测量。"],
+    ["A prepared design-file bundle for builders who want to fabricate and assemble the controller.",
+     "面向希望自行打样与组装控制器的制作者的成品设计文件包。"],
+    ["A DIY hardware kit for building the word clock. Confirm the exact contents before listing.",
+     "用于制作文字时钟的 DIY 硬件套件。上架前请确认具体内容清单。"],
+    ["A DIY hardware kit for uPower.", "uPower 的 DIY 硬件套件。"],
 
-    /* ---- 示例内容（换成你自己的内容后，同步改这里即可）---- */
-    "SimpleFOC Controller": "SimpleFOC 控制器",
-    "A compact motor-control board concept for experimenting with open-source FOC and small BLDC motors.":
-      "一款紧凑的电机控制板方案，用于实验开源 FOC 算法与小型无刷电机。",
-    "Word Clock": "文字时钟",
-    "A carefully assembled word-clock project combining custom electronics, a display panel, and open firmware.":
-      "一个精心组装的文字时钟项目，结合定制电路、显示面板与开源固件。",
-    "MiniMultiScope": "迷你多用示波器",
-    "A compact STM32-based hardware project for exploring signal acquisition and measurement.":
-      "基于 STM32 的紧凑型硬件项目，用于探索信号采集与测量。",
-    "SimpleFOC Controller Design Files": "SimpleFOC 控制器设计文件",
-    "A prepared design-file bundle for builders who want to fabricate and assemble the controller.":
-      "为希望自行打样与组装控制器的制作者准备的设计文件包。",
-    "Word Clock DIY Kit": "文字时钟 DIY 套件",
-    "A DIY hardware kit for building the word clock. Confirm the exact contents before listing.":
-      "用于制作文字时钟的 DIY 硬件套件，上架前请确认具体清单。",
-    "From Schematic to PCB: Engineering Notes": "从原理图到 PCB：工程笔记",
-    "A sample post structure for documenting component choices, layout decisions, and validation.":
-      "用于记录器件选型、布局决策与验证过程的示例文章结构。",
+    /* --- 分类标签 --- */
+    ["Motor Control", "电机控制"],
+    ["Desktop Electronics", "桌面电子"],
+    ["Test & Measurement", "测试与测量"],
+    ["Test and Measurement", "测试与测量"],
+    ["Digital", "数字资料"],
+    ["Hardware Kit", "硬件套件"],
 
-    /* ---- 分类标签 ---- */
-    "MOTOR CONTROL": "电机控制",
-    "Motor Control": "电机控制",
-    "DESKTOP ELECTRONICS": "桌面电子",
-    "Desktop Electronics": "桌面电子",
-    "TEST & MEASUREMENT": "测试与测量",
-    "Test & Measurement": "测试与测量",
-    "DIGITAL": "数字文件",
-    "digital": "数字文件",
-    "HARDWARE-KIT": "硬件套件",
-    "hardware kit": "硬件套件",
-    "Hardware": "硬件",
-
-    /* ---- 导航 / 页脚 ---- */
-    "Home": "首页",
-    "Projects": "项目",
-    "Shop": "商店",
-    "Notes": "笔记",
-    "About": "关于",
-    "Featured": "精选",
-    "Contact": "联系",
-    "GitHub": "GitHub",
-    "Powered by Jekyll & Minimal Mistakes.": "由 Jekyll & Minimal Mistakes 驱动。",
-    "Skip to primary navigation": "跳到主导航",
-    "Skip to content": "跳到正文",
-    "Skip to footer": "跳到页脚",
-    "Enter your search term...": "输入搜索关键词…",
-    "Search": "搜索"
-  };
-
-  /* 属性型文案（placeholder / aria-label） */
-  var ATTRS = [
-    { sel: '[aria-label="Toggle search"]', attr: "aria-label", zh: "切换搜索" },
-    { sel: '[aria-label="Toggle menu"]', attr: "aria-label", zh: "切换菜单" },
-    { sel: "input.search-input", attr: "placeholder", zh: "输入搜索关键词…" }
+    /* --- 界面常用词 --- */
+    ["Details →", "详情 →"],
+    ["Explore project →", "查看项目 →"],
+    ["All projects →", "全部项目 →"],
+    ["All notes →", "全部笔记 →"],
+    ["Visit shop →", "进入商店 →"],
+    ["Price on request", "价格面议"]
   ];
 
-  /* ======================================================================
-     内部状态：记录原文，切回时还原
-     ====================================================================== */
-  var origText = new Map();     // Text 节点 → 原文
-  var origEl = new Map();       // 元素 → 原 textContent
-  var origAttr = new Map();     // 元素 → 原属性值
-
-  function pad(n) { return (n < 10 ? "0" : "") + n; }
-
-  function skipNode(n) {
-    var p = n.parentNode;
-    if (!p || !p.nodeName) return true;
-    var t = p.nodeName.toUpperCase();
-    return t === "SCRIPT" || t === "STYLE" || t === "NOSCRIPT" ||
-           t === "CODE" || t === "PRE" || t === "TEXTAREA";
+  var TO_ZH = {}, TO_EN = {};
+  for (var d = 0; d < DICT.length; d++) {
+    TO_ZH[DICT[d][0]] = DICT[d][1];
+    TO_EN[DICT[d][1]] = DICT[d][0];
   }
 
-  /* 祖先已用 data-zh 或 lang-* 区块处理的，文本模式跳过 */
-  function handled(n) {
-    var el = n.parentElement;
-    if (!el || !el.closest) return false;
-    return !!el.closest("[data-zh], .lang-zh, .lang-en");
-  }
+  /* ========== 4. 正文双语块 ========== */
 
-  function textNodes() {
-    var out = [], tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-    while (tw.nextNode()) out.push(tw.currentNode);
-    return out;
-  }
+  /* 4a. 给块打标记
+     优先用哨兵 span（.bi-lang-mark[data-lang]），向上找到所属 div；
+     再兼容 div 自带 class 的写法。两条路都走，防止 kramdown 吃掉 class。 */
+  function scanBlocks() {
+    var i, m, lang, box;
 
-  /* ---------------- 切到中文 ---------------- */
-  function toZh() {
-    /* ① data-zh 元素级 */
-    var a = document.querySelectorAll("[data-zh]");
-    for (var i = 0; i < a.length; i++) {
-      var el = a[i], zh = el.getAttribute("data-zh");
-      if (!zh) continue;
-      if (!origEl.has(el)) origEl.set(el, el.textContent);
-      el.textContent = zh;
-    }
-
-    /* ② 字典匹配纯文本节点 */
-    var ns = textNodes();
-    for (var j = 0; j < ns.length; j++) {
-      var n = ns[j];
-      if (skipNode(n) || handled(n)) continue;
-      var raw = n.nodeValue, t = raw.trim();
-      if (!t) continue;
-      var v = DICT[t];
-      if (v == null) continue;
-      if (!origText.has(n)) origText.set(n, raw);
-      n.nodeValue = raw.replace(t, v);
-    }
-
-    /* ③ placeholder / aria-label */
-    for (var k = 0; k < ATTRS.length; k++) {
-      var r = ATTRS[k], list = document.querySelectorAll(r.sel);
-      for (var m = 0; m < list.length; m++) {
-        var e = list[m];
-        if (!origAttr.has(e)) origAttr.set(e, { a: r.attr, v: e.getAttribute(r.attr) });
-        e.setAttribute(r.attr, r.zh);
+    var marks = document.querySelectorAll(".bi-lang-mark");
+    for (i = 0; i < marks.length; i++) {
+      m = marks[i];
+      lang = m.getAttribute("data-lang");
+      if (!lang) continue;
+      box = m;
+      while (box && box !== document.body && box.nodeName !== "DIV") {
+        box = box.parentElement;
       }
+      if (box && box !== document.body) box.setAttribute("data-bi-lang", lang);
     }
 
-    /* ④ 日期本地化 */
-    var ts = document.querySelectorAll("time, .page__meta");
-    for (var p = 0; p < ts.length; p++) {
-      var tm = ts[p];
-      if (tm.closest("[data-zh], .lang-zh, .lang-en")) continue;
-      var txt = (tm.textContent || "").trim();
-      if (!txt) continue;
-      var d = new Date(txt.replace(/,/g, ""));
-      if (isNaN(d.getTime())) continue;
-      if (!origEl.has(tm)) origEl.set(tm, tm.textContent);
-      tm.textContent = d.getFullYear() + "年" + pad(d.getMonth() + 1) + "月" + pad(d.getDate()) + "日";
+    var legacy = document.querySelectorAll(".bi-lang-en, .bi-lang-zh");
+    for (i = 0; i < legacy.length; i++) {
+      box = legacy[i];
+      if (box.hasAttribute("data-bi-lang")) continue;
+      box.setAttribute(
+        "data-bi-lang",
+        box.classList && box.classList.contains("bi-lang-zh") ? "zh" : "en"
+      );
     }
   }
 
-  /* ---------------- 切回英文（原文还原） ---------------- */
-  function toEn() {
-    origText.forEach(function (v, n) { n.nodeValue = v; });
-    origEl.forEach(function (v, el) { el.textContent = v; });
-    origAttr.forEach(function (o, el) {
-      if (o.v == null) el.removeAttribute(o.a); else el.setAttribute(o.a, o.v);
+  /* 4b. 直接控制显隐 —— 不依赖任何外部 CSS */
+  function applyBlocks(lang) {
+    var blocks = document.querySelectorAll("[data-bi-lang]");
+    for (var i = 0; i < blocks.length; i++) {
+      var b = blocks[i];
+      b.style.display = b.getAttribute("data-bi-lang") === lang ? "" : "none";
+    }
+  }
+
+  /* ========== 5. 短字段 / 标题 ========== */
+
+  /* [data-zh]：英文原文只存一次，切换时还原 */
+  function swapDataZh(lang) {
+    var nodes = document.querySelectorAll("[data-zh]");
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      var zh = el.getAttribute("data-zh");
+      if (!zh) continue;
+      if (!el.hasAttribute("data-en")) el.setAttribute("data-en", el.textContent);
+      el.textContent = lang === "zh" ? zh : el.getAttribute("data-en");
+    }
+  }
+
+  /* [data-zh-title]：页面大标题 */
+  function swapTitle(lang) {
+    var marker = document.querySelector("[data-zh-title]");
+    if (!marker) return;
+    var zh = marker.getAttribute("data-zh-title");
+    if (!zh) return;
+    var h1 =
+      document.querySelector("h1.page__title") ||
+      document.querySelector(".page__title") ||
+      document.querySelector(".page__content h1") ||
+      document.querySelector("h1");
+    if (!h1) return;
+    if (!h1.hasAttribute("data-en")) h1.setAttribute("data-en", h1.textContent);
+    h1.textContent = lang === "zh" ? zh : h1.getAttribute("data-en");
+  }
+
+  /* DICT：遍历纯文本节点，只改叶子文本，不动 HTML 结构 */
+  function swapDict(lang) {
+    var map = lang === "zh" ? TO_ZH : TO_EN;
+    var walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
+    var list = [], n;
+    while ((n = walker.nextNode())) list.push(n);
+
+    for (var i = 0; i < list.length; i++) {
+      var node = list[i];
+      var parent = node.parentNode;
+      if (!parent) continue;
+      var tag = (parent.nodeName || "").toLowerCase();
+      if (tag === "script" || tag === "style" || tag === "code" || tag === "pre") continue;
+
+      var raw = node.nodeValue;
+      var flat = raw.replace(/\s+/g, " ").trim();
+      var hit = map[flat];
+      if (hit === undefined) continue;
+
+      var lead = raw.match(/^\s*/)[0];
+      var tail = raw.match(/\s*$/)[0];
+      node.nodeValue = lead + hit + tail;
+    }
+  }
+
+  /* ========== 6. 切换按钮 ========== */
+  function syncButton(lang) {
+    var btn = document.getElementById("bi-lang-switch");
+    if (!btn) return;
+    var en = btn.querySelector(".bi-ls-en");
+    var zh = btn.querySelector(".bi-ls-zh");
+    if (en) en.classList.toggle("is-on", lang === "en");
+    if (zh) zh.classList.toggle("is-on", lang === "zh");
+  }
+
+  function buildButton() {
+    if (document.getElementById("bi-lang-switch")) return;
+
+    var wrap = document.createElement("div");
+    wrap.id = "bi-lang-switch";
+    wrap.className = "bi-lang-switch";
+    wrap.innerHTML =
+      '<button type="button" class="bi-ls-en" data-set="en">EN</button>' +
+      '<span class="bi-ls-sep">|</span>' +
+      '<button type="button" class="bi-ls-zh" data-set="zh">中文</button>';
+
+    var host =
+      document.querySelector(".masthead__inner-wrap") ||
+      document.querySelector(".masthead") ||
+      document.querySelector("header");
+
+    if (host && host !== document.body) {
+      host.appendChild(wrap);
+    } else {
+      wrap.className = "bi-lang-switch is-fixed";
+    }
+    document.body.appendChild(wrap);
+
+    wrap.addEventListener("click", function (e) {
+      var b = e.target.closest ? e.target.closest("[data-set]") : null;
+      if (!b) return;
+      try {
+        localStorage.setItem(STORAGE_KEY, b.getAttribute("data-set"));
+      } catch (err) {}
+      apply(b.getAttribute("data-set"));
     });
-    origText.clear(); origEl.clear(); origAttr.clear();
   }
 
-  /* ---------------- 应用 ---------------- */
+  /* ========== 7. 应用 ========== */
+  var langState = saved;
+
   function apply(lang) {
-    if (lang === "zh") toZh(); else toEn();
-    var h = document.documentElement;
-    h.setAttribute("data-lang", lang);
-    h.lang = (lang === "zh") ? "zh-CN" : "en";
-    var btns = document.querySelectorAll(".bi-lang button[data-l]");
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle("on", btns[i].getAttribute("data-l") === lang);
-    }
+    langState = lang;
+    root.setAttribute("data-lang", lang);
+    root.setAttribute("lang", lang === "zh" ? "zh-CN" : "en");
+    if (!document.body) return;
+    scanBlocks();
+    applyBlocks(lang);
+    swapDict(lang);
+    swapTitle(lang);
+    swapDataZh(lang);
+    syncButton(lang);
   }
 
-  /* ---------------- 切换按钮 ---------------- */
-  function build() {
-    if (document.querySelector(".bi-lang")) return;
-    var w = document.createElement("div");
-    w.className = "bi-lang";
-    w.setAttribute("role", "group");
-    w.setAttribute("aria-label", "Language");
-    [["en", "EN"], ["zh", "中文"]].forEach(function (p) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.setAttribute("data-l", p[0]);
-      b.textContent = p[1];
-      b.addEventListener("click", function () {
-        try { localStorage.setItem(KEY, p[0]); } catch (e) {}
-        apply(p[0]);
-      });
-      w.appendChild(b);
-    });
-    var host = document.querySelector(".greedy-nav") ||
-               document.querySelector(".masthead__inner-wrap") ||
-               document.querySelector(".masthead");
-    if (host) host.appendChild(w);
-    else { w.style.cssText = "position:fixed;top:8px;right:8px;z-index:99999"; document.body.appendChild(w); }
-  }
-
-  function pick() {
-    try {
-      var s = localStorage.getItem(KEY);
-      if (s === "zh" || s === "en") return s;
-    } catch (e) {}
-    return ((navigator.language || "").toLowerCase().indexOf("zh") === 0) ? "zh" : "zh";
-  }
-
+  /* ========== 8. 启动 ========== */
   function boot() {
-    build();
-    apply(pick());
+    apply(saved);
+    buildButton();
+    /* 图片/异步内容加载完后再扫一次，防止漏掉 */
+    window.addEventListener("load", function () {
+      scanBlocks();
+      applyBlocks(langState);
+    });
   }
 
-  function safe() {
-    try { boot(); } catch (e) {
-      if (window.console && console.warn) console.warn("[i18n] 未启用:", e);
-    }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
   }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", safe);
-  else safe();
 })();

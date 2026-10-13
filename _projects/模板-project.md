@@ -9,12 +9,16 @@ excerpt: "A compact BLDC controller for experimenting with open-source FOC."
 excerpt_zh: "用于试验开源 FOC 的紧凑型无刷电机控制器。"
 featured: false
 github: "https://github.com/bi4wms/example-motor-controller"
+image: "/assets/images/projects/example-motor-controller.jpg"
 ---
 
 <!-- 页面大标题的中文（放在正文第一行，不会显示） -->
 <span data-zh-title="示例电机控制器" hidden></span>
 
+<!-- ↓↓↓ 英文正文 ↓↓↓ 哨兵 span 必须保留在块内第一行 ↓↓↓ -->
 <div class="bi-lang-en" markdown="1">
+
+<span class="bi-lang-mark" data-lang="en" hidden></span>
 
 ## Overview
 
@@ -39,9 +43,16 @@ and what still needs validation.
 - Firmware: basic FOC loop running
 - Validation: pending thermal test
 
+## License
+
+Hardware: CERN-OHL-S. Firmware: MIT. Documentation: CC BY-SA 4.0.
+
 </div>
 
+<!-- ↓↓↓ 中文正文 ↓↓↓ -->
 <div class="bi-lang-zh" markdown="1">
+
+<span class="bi-lang-mark" data-lang="zh" hidden></span>
 
 ## 概述
 
@@ -65,21 +76,7 @@ and what still needs validation.
 - 固件：基础 FOC 环路已跑通
 - 验证：待做温升测试
 
-</div>
-
----
-
-<div class="bi-lang-en" markdown="1">
-
-### License
-
-Hardware: CERN-OHL-S. Firmware: MIT. Documentation: CC BY-SA 4.0.
-
-</div>
-
-<div class="bi-lang-zh" markdown="1">
-
-### 许可
+## 许可
 
 硬件：CERN-OHL-S。固件：MIT。文档：CC BY-SA 4.0。
 

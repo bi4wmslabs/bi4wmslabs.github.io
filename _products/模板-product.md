@@ -17,7 +17,10 @@ image: "/assets/images/products/example-board.jpg"
 <!-- 页面大标题的中文 -->
 <span data-zh-title="示例板卡设计文件" hidden></span>
 
+<!-- ↓↓↓ 英文正文 ↓↓↓ -->
 <div class="bi-lang-en" markdown="1">
+
+<span class="bi-lang-mark" data-lang="en" hidden></span>
 
 ## What's included
 
@@ -38,7 +41,10 @@ support is available by email.
 
 </div>
 
+<!-- ↓↓↓ 中文正文 ↓↓↓ -->
 <div class="bi-lang-zh" markdown="1">
+
+<span class="bi-lang-mark" data-lang="zh" hidden></span>
 
 ## 包含内容
 
@@ -60,4 +66,4 @@ support is available by email.
 
 ---
 
-<!-- 购买按钮由 _layouts/product.html 根据 checkout_url 渲染，无需手写 -->
+<!-- 购买按钮由 _layouts/product.html 根据 checkout_url 自动渲染，无需手写 -->

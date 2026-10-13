@@ -3,7 +3,7 @@ title: "Debugging the Power Stage"
 title_zh: "功率级调试笔记"
 excerpt: "How I traced a gate-drive ringing problem back to layout."
 excerpt_zh: "我如何把一处栅极驱动振铃问题追查到 PCB 布局上。"
-date: 2026-10-15
+date: 2026-10-12 10:00:00 +0800
 categories: [notes]
 tags: [power, layout, debugging]
 read_time: true
@@ -13,7 +13,10 @@ comments: false
 <!-- 页面大标题的中文 -->
 <span data-zh-title="功率级调试笔记" hidden></span>
 
+<!-- ↓↓↓ 英文正文 ↓↓↓ -->
 <div class="bi-lang-en" markdown="1">
+
+<span class="bi-lang-mark" data-lang="en" hidden></span>
 
 ## The symptom
 
@@ -37,7 +40,10 @@ Measure with the right probe first. Only then start changing the layout.
 
 </div>
 
+<!-- ↓↓↓ 中文正文 ↓↓↓ -->
 <div class="bi-lang-zh" markdown="1">
+
+<span class="bi-lang-mark" data-lang="zh" hidden></span>
 
 ## 现象
 
