@@ -71,6 +71,6 @@ footer:
       url: "https://github.com/bi4wms"
     - label: "Contact"
       icon: "fas fa-fw fa-envelope"
-      url: "mailto:YOUR_EMAIL@example.com"
+      url: "mailto:bi4wms@gmail.com"
 atom_feed:
   hide: true

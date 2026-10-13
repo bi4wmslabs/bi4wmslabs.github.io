@@ -5,7 +5,7 @@ category: "hardware-kit"
 price: "$69.00"
 summary: "A DIY hardware kit for building the word clock. Confirm the exact contents before listing."
 featured: true
-checkout_url: "YOUR_CHECKOUT_URL"
+checkout_url: "https://buy.stripe.com/7sYbJ047QgrvaXA2vs6Zy05"
 github: "YOUR_PROJECT_REPOSITORY"
 ---
 

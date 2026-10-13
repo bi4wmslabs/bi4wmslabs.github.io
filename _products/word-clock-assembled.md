@@ -5,7 +5,7 @@ category: "assembled-hardware"
 price: "$99.00"
 summary: "An assembled word clock. Replace example pricing and document actual options, power supply, and shipping."
 featured: false
-checkout_url: "YOUR_CHECKOUT_URL"
+checkout_url: "https://buy.stripe.com/7sYbJ047QgrvaXA2vs6Zy05"
 github: "YOUR_PROJECT_REPOSITORY"
 ---
 
