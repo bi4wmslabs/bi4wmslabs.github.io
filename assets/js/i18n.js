@@ -1,30 +1,38 @@
 /* =========================================================
-   bi4wms · 中英切换引擎  v2
+   bi4wms · 中英切换引擎  v3
    ---------------------------------------------------------
    放到：assets/js/i18n.js
-   引入：_includes/head/custom.html 里加一行
-         <script src="/assets/js/i18n.js"></script>
+   引入（任选其一，都行）：
+     A. _includes/head/custom.html 里加
+        <script src="/assets/js/i18n.js"></script>
+     B. _config.yml 里加
+        footer_scripts:
+          - /assets/js/i18n.js
 
-   v2 相比 v1 的关键改动：
-   ★ 不再依赖外部 CSS 做正文显隐 —— JS 自己注入 style 并直接控制 display
-     （解决"CSS 没加载 / class 被 kramdown 剥离导致中英文同时显示"的问题）
-
-   它做五件事：
-     1) 自己注入一段最小 CSS，防首屏闪烁
-     2) 扫描正文双语块（哨兵 span 标记），打 data-bi-lang 并直接控制显隐
-     3) 处理 [data-zh]        → 卡片标题 / 摘要等短字段
-     4) 处理 [data-zh-title]  → 页面大标题 <h1>
-     5) 内置 DICT 兜底       → 不改卡片模板也能切现有内容
+   v3 修复：
+   ★ 问题1「只有主页有按钮」
+     - 按钮改为固定定位（右下角），不再依赖页面里是否找得到 masthead
+     - 修正 v2 的 appendChild 逻辑错误（会把按钮从 masthead 挪走）
+     - 加全局去重标志：head 与 footer 同时引入也只执行一次
+   ★ 问题2「目录里中英文子标题同时在」
+     - 新增 syncToc()：目录项指向的标题若在隐藏块内，就把该目录项一起隐藏
+     - 在 DOMContentLoaded / load / 300ms / 1200ms 多次执行，
+       兼容 Jekyll 服务端生成目录与主题 JS 客户端生成目录两种情况
 
    原则：切回 EN 是「原文还原」，不是二次翻译。
    ========================================================= */
 (function () {
   "use strict";
 
+  /* 全局去重：允许同一个文件被引入两次而不重复初始化 */
+  if (window.__BI_I18N_V3__) return;
+  window.__BI_I18N_V3__ = true;
+
   var STORAGE_KEY = "bi4wms-lang";
   var root = document.documentElement;
+  var langState = "en";
 
-  /* ========== 1. 定语言（head 阶段就定，防闪） ========== */
+  /* ========== 1. 定语言（尽早执行，防首屏闪） ========== */
   var saved = null;
   try {
     saved = localStorage.getItem(STORAGE_KEY);
@@ -35,11 +43,11 @@
     var nav = navigator.language || navigator.userLanguage || "";
     saved = nav.toLowerCase().indexOf("zh") === 0 ? "zh" : "en";
   }
+  langState = saved;
   root.setAttribute("data-lang", saved);
   root.setAttribute("lang", saved === "zh" ? "zh-CN" : "en");
 
-  /* ========== 2. 注入最小 CSS（不依赖外部文件） ========== */
-  /* 只管正文块的显隐与哨兵隐藏；按钮美化仍由外部 CSS 负责 */
+  /* ========== 2. 注入核心样式（不依赖外部 CSS） ========== */
   var style = document.createElement("style");
   style.id = "bi-i18n-core";
   style.textContent =
@@ -103,8 +111,8 @@
   /* ========== 4. 正文双语块 ========== */
 
   /* 4a. 给块打标记
-     优先用哨兵 span（.bi-lang-mark[data-lang]），向上找到所属 div；
-     再兼容 div 自带 class 的写法。两条路都走，防止 kramdown 吃掉 class。 */
+     优先用哨兵 span（.bi-lang-mark[data-lang]）向上找所属 div；
+     再兼容 div 自带 class 的写法。双保险，防止 kramdown 吃掉 class。 */
   function scanBlocks() {
     var i, m, lang, box;
 
@@ -140,7 +148,64 @@
     }
   }
 
-  /* ========== 5. 短字段 / 标题 ========== */
+  /* ========== 5. 目录（TOC）同步 ★ v3 新增 ========== */
+  /* 目录项指向的标题若属于「当前不显示的语言块」，就把该目录项一起藏掉 */
+
+  function isInHiddenBlock(el) {
+    var node = el;
+    while (node && node !== document.body) {
+      if (node.style && node.style.display === "none") return true;
+      if (node.hasAttribute && node.hasAttribute("hidden")) return true;
+      var bi = node.getAttribute ? node.getAttribute("data-bi-lang") : null;
+      if (bi && bi !== langState) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function syncToc() {
+    var sel = [
+      "nav.toc a", ".toc a", ".toc__menu a",
+      "#markdown-toc a", "ol#markdown-toc a", "ul#markdown-toc a",
+      ".sidebar__right a", ".toc-wrapper a"
+    ].join(",");
+
+    var links;
+    try {
+      links = document.querySelectorAll(sel);
+    } catch (e) {
+      return;
+    }
+
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      var href = a.getAttribute("href") || "";
+      if (href.charAt(0) !== "#") continue;
+
+      var id = href.slice(1);
+      try {
+        id = decodeURIComponent(id);
+      } catch (e2) {}
+      if (!id) continue;
+
+      var target = document.getElementById(id);
+      if (!target) continue;
+
+      var li = a.closest ? a.closest("li") : null;
+      if (!li) continue;
+
+      li.style.display = isInHiddenBlock(target) ? "none" : "";
+    }
+  }
+
+  /* 目录可能是主题 JS 在 load 之后才生成的，所以多跑几次 */
+  function syncTocSoon() {
+    syncToc();
+    setTimeout(syncToc, 300);
+    setTimeout(syncToc, 1200);
+  }
+
+  /* ========== 6. 短字段 / 标题 ========== */
 
   /* [data-zh]：英文原文只存一次，切换时还原 */
   function swapDataZh(lang) {
@@ -200,7 +265,7 @@
     }
   }
 
-  /* ========== 6. 切换按钮 ========== */
+  /* ========== 7. 切换按钮 ★ v3 改为固定定位 ========== */
   function syncButton(lang) {
     var btn = document.getElementById("bi-lang-switch");
     if (!btn) return;
@@ -216,36 +281,27 @@
     var wrap = document.createElement("div");
     wrap.id = "bi-lang-switch";
     wrap.className = "bi-lang-switch";
+    wrap.setAttribute("aria-label", "Language switch");
     wrap.innerHTML =
       '<button type="button" class="bi-ls-en" data-set="en">EN</button>' +
       '<span class="bi-ls-sep">|</span>' +
       '<button type="button" class="bi-ls-zh" data-set="zh">中文</button>';
 
-    var host =
-      document.querySelector(".masthead__inner-wrap") ||
-      document.querySelector(".masthead") ||
-      document.querySelector("header");
-
-    if (host && host !== document.body) {
-      host.appendChild(wrap);
-    } else {
-      wrap.className = "bi-lang-switch is-fixed";
-    }
+    /* 固定定位挂到 body 末尾 —— 任何页面、任何布局都一定出现 */
     document.body.appendChild(wrap);
 
     wrap.addEventListener("click", function (e) {
       var b = e.target.closest ? e.target.closest("[data-set]") : null;
       if (!b) return;
+      var lang = b.getAttribute("data-set");
       try {
-        localStorage.setItem(STORAGE_KEY, b.getAttribute("data-set"));
+        localStorage.setItem(STORAGE_KEY, lang);
       } catch (err) {}
-      apply(b.getAttribute("data-set"));
+      apply(lang);
     });
   }
 
-  /* ========== 7. 应用 ========== */
-  var langState = saved;
-
+  /* ========== 8. 应用 ========== */
   function apply(lang) {
     langState = lang;
     root.setAttribute("data-lang", lang);
@@ -256,17 +312,19 @@
     swapDict(lang);
     swapTitle(lang);
     swapDataZh(lang);
+    syncToc();
     syncButton(lang);
   }
 
-  /* ========== 8. 启动 ========== */
+  /* ========== 9. 启动 ========== */
   function boot() {
-    apply(saved);
     buildButton();
-    /* 图片/异步内容加载完后再扫一次，防止漏掉 */
+    apply(saved);
+    syncTocSoon();
     window.addEventListener("load", function () {
       scanBlocks();
       applyBlocks(langState);
+      syncTocSoon();
     });
   }
 

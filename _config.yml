@@ -74,3 +74,5 @@ footer:
       url: "mailto:bi4wms@gmail.com"
 atom_feed:
   hide: true
+footer_scripts:
+    - /assets/js/i18n.js

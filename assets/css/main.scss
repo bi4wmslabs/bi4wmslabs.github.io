@@ -87,3 +87,85 @@ body { background: var(--bi-paper); }
   .bi-post-row { grid-template-columns: 1fr; gap: .35rem; }
   .bi-hero { border-radius: .8rem; }
 }
+
+/* =========================================================
+   bi4wms · 切换按钮样式  v3
+   ---------------------------------------------------------
+   v3：按钮默认【固定定位在右下角】
+   → 不依赖页面里有没有 masthead，任何布局下都一定出现
+   → 正文显隐 / 目录同步已由 i18n.js 接管，本文件只管外观
+     不加载也能正常切换，只是按钮朴素些
+
+   用法：粘贴到 assets/css/main.scss 末尾
+         （必须在 @import "minimal-mistakes"; 之后）
+   或存成 assets/css/lang-switch.css 再在 head/custom.html 里 link
+   ========================================================= */
+
+.bi-lang-switch {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9999;
+
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .28rem .6rem;
+  border: 1px solid var(--bi-line, #d8dde5);
+  border-radius: 999px;
+  background: var(--bi-card, #ffffff);
+  box-shadow: 0 2px 10px rgba(16, 20, 28, .14);
+
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.bi-lang-switch button {
+  background: none;
+  border: 0;
+  padding: .14rem .3rem;
+  margin: 0;
+  cursor: pointer;
+  color: var(--bi-muted, #7b8794);
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+.bi-lang-switch button:hover { color: var(--bi-accent, #2463eb); }
+.bi-lang-switch button.is-on { color: var(--bi-accent, #2463eb); }
+.bi-lang-switch .bi-ls-sep { color: var(--bi-line, #d8dde5); }
+
+/* 深色模式（若你启用了深色主题则自动生效） */
+:root[data-theme="dark"] .bi-lang-switch {
+  background: var(--bi-card, #141a23);
+  border-color: var(--bi-line, #232a36);
+}
+
+/* 小屏挪到左下，避免挡住滚动条/内容 */
+@media (max-width: 480px) {
+  .bi-lang-switch { right: 12px; bottom: 12px; }
+}
+
+@media print { .bi-lang-switch { display: none !important; } }
+
+/* ----------------------------------------------------------
+   可选：想把按钮放进顶栏而不是悬浮，把下面这段取消注释，
+   并把 i18n.js 里 buildButton() 的
+       document.body.appendChild(wrap);
+   改成
+       (document.querySelector(".masthead__inner-wrap")
+        || document.body).appendChild(wrap);
+   ---------------------------------------------------------- */
+/*
+.bi-lang-switch {
+  position: static;
+  right: auto;
+  bottom: auto;
+  margin-left: auto;
+  box-shadow: none;
+}
+*/
