@@ -2,7 +2,7 @@
 title: "project test"
 title_zh: "项目测试"
 date: 2026-10-15
-categories: [Hardware]
+categories: "Motor Control"
 excerpt: "English one-line summary."
 excerpt_zh: "中文一句话摘要。"
 ---
