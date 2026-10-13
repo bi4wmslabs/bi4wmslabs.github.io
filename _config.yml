@@ -11,8 +11,8 @@ search: true
 breadcrumbs: true
 words_per_minute: 200
 logo: "/assets/images/bi4wms-mark.svg"
-masthead_title: "bi4wms"
-subtitle: "Open Hardware Lab"
+masthead_title: "BI4WMS LABS"
+subtitle: "Open Hardware Labs"
 include:
   - _pages
 markdown: kramdown
@@ -54,7 +54,7 @@ defaults:
       author_profile: false
       toc: false
 author:
-  name: "bi4wms"
+  name: "BI4WMS"
   bio: "Hardware engineering, open-source projects, and practical build notes."
   location: "Independent hardware lab"
   links:
