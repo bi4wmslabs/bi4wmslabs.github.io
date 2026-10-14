@@ -11,7 +11,6 @@ summary_zh: "面向希望自行打样与组装该板卡的制作者的成品设�
 featured: false
 checkout_url: "https://buy.stripe.com/xxxxxxxxxxxxxxxx"
 github: "https://github.com/bi4wms/example-board"
-image: "/assets/images/products/example-board.jpg"
 ---
 
 <!-- 页面大标题的中文 -->
