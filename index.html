@@ -43,16 +43,26 @@ permalink: /
   <p class="bi-small-note">Purchases are completed through the linked checkout provider. This site does not collect or store payment details.</p>
 </section>
 
+<!-- Engineering notes：标题/摘要已接入双语。
+     规则：仅当文章 front matter 里有 title_zh / excerpt_zh 时才输出 data-zh，
+     没有中文译文的文章保持纯英文，切换时不会被清空。
+     “All notes →” 不加 data-zh：它已由 i18n.js 的 DICT 兜底覆盖，
+     重复挂载会让 data-en 缓存到中文，切回 EN 就还原不回去。 -->
 <section class="bi-section bi-notes">
   <div class="bi-section-heading">
-    <div><p class="bi-eyebrow">FROM THE WORKBENCH</p><h2>Engineering notes</h2></div>
+    <div><p class="bi-eyebrow" data-zh="来自工作台">FROM THE WORKBENCH</p><h2 data-zh="工程笔记">Engineering notes</h2></div>
     <a href="{{ '/notes/' | relative_url }}">All notes →</a>
   </div>
   <div class="bi-post-list">
     {% for post in site.posts limit: 3 %}
       <article class="bi-post-row">
         <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>
-        <div><h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3><p>{{ post.excerpt | strip_html | truncate: 150 }}</p></div>
+        <div>
+          <h3>
+            <a href="{{ post.url | relative_url }}"{% if post.title_zh %} data-zh="{{ post.title_zh | escape }}"{% endif %}>{{ post.title }}</a>
+          </h3>
+          <p{% if post.excerpt_zh %} data-zh="{{ post.excerpt_zh | escape }}"{% endif %}>{{ post.excerpt | strip_html | truncate: 150 }}</p>
+        </div>
       </article>
     {% endfor %}
   </div>
