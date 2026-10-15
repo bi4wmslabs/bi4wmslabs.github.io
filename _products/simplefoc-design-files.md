@@ -8,6 +8,7 @@ title_zh: "SimpleFOC 控制器设计文件"
 short_name_zh: "SimpleFOC 文件"
 category_zh: "数字资料"
 summary_zh: "面向希望自行打样与组装控制器的制作者的成品设计文件包。"
+image: "/assets/images/products/simplefoc-design-files.png"
 featured: true
 checkout_url: "YOUR_CHECKOUT_URL"
 github: "https://github.com/bi4wms/SimpleFOC"

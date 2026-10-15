@@ -9,6 +9,7 @@ short_name_zh: "文字时钟套件"
 category_zh: "硬件套件"
 summary_zh: "用于制作文字时钟的 DIY 硬件套件。上架前请确认具体内容清单。"
 featured: true
+image: "/assets/images/products/word-clock-kit.png"
 checkout_url: "https://buy.stripe.com/7sYbJ047QgrvaXA2vs6Zy05"
 github: "YOUR_PROJECT_REPOSITORY"
 ---

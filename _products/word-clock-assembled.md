@@ -8,7 +8,8 @@ title_zh: "文字时钟 — 成品"
 short_name_zh: "文字时钟"
 category_zh: "成品硬件"
 summary_zh: "成品文字时钟。上架前请替换为实际的价格、选项、电源与运输信息。"
-featured: false
+featured: ture
+image: "/assets/images/products/word-clock-assembled.png"
 checkout_url: "https://buy.stripe.com/7sYbJ047QgrvaXA2vs6Zy05"
 github: "YOUR_PROJECT_REPOSITORY"
 ---

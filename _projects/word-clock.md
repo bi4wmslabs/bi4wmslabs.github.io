@@ -4,6 +4,7 @@ short_name: "Word Clock"
 category: "Desktop Electronics"
 date: 2026-10-02
 featured: true
+image: "/assets/images/projects/word-clock.png"
 excerpt: "A carefully assembled word-clock project combining custom electronics, a display panel, and open firmware."
 title_zh: "文字时钟"
 short_name_zh: "文字时钟"

@@ -9,6 +9,7 @@ short_name_zh: "uPower 套件"
 category_zh: "硬件套件"
 summary_zh: "uPower 的 DIY 硬件套件。"
 featured: true
+image: "/assets/images/products/upower-kit.png"
 checkout_url: "https://buy.stripe.com/7sYbJ047QgrvaXA2vs6Zy05"
 github: "YOUR_PROJECT_REPOSITORY"
 ---

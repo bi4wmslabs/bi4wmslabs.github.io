@@ -4,6 +4,7 @@ short_name: "uPower"
 category: "Desktop Electronics"
 date: 2026-10-02
 featured: true
+image: "/assets/images/projects/upower.png"
 excerpt: "A carefully assembled word-clock project combining custom electronics, a display panel, and open firmware."
 title_zh: "uPOWER电源"
 short_name_zh: "电源"

@@ -7,7 +7,8 @@ category: "Motor Control"
 category_zh: "电机控制"
 excerpt: "A compact BLDC controller for experimenting with open-source FOC."
 excerpt_zh: "用于试验开源 FOC 的紧凑型无刷电机控制器。"
-featured: false
+featured: ture
+image: "/assets/images/projects/upower.png"
 github: "https://github.com/bi4wms/example-motor-controller"
 image: "/assets/images/projects/example-motor-controller.jpg"
 ---

@@ -4,6 +4,7 @@ short_name: "MiniMultiScope"
 category: "Test & Measurement"
 date: 2026-10-03
 featured: true
+image: "/assets/images/projects/mini-multiscope.png"
 excerpt: "A compact STM32-based hardware project for exploring signal acquisition and measurement."
 title_zh: "多功能表"
 short_name_zh: "多用表"

@@ -3,6 +3,7 @@ title: "SimpleFOC Controller"
 short_name: "SimpleFOC"
 category: "Motor Control"
 date: 2026-10-01
+image: "/assets/images/projects/simplefoc.png"
 featured: true
 excerpt: "A compact motor-control board concept for experimenting with open-source FOC and small BLDC motors."
 title_zh: "SimpleFOC控制器"

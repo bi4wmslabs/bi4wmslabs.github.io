@@ -9,6 +9,7 @@ price: "$19.00"
 summary: "A prepared design-file bundle for builders who want to fabricate and assemble the board."
 summary_zh: "面向希望自行打样与组装该板卡的制作者的成品设计文件包。"
 featured: false
+image: "/assets/images/products/word-clock-kit.png"
 checkout_url: "https://buy.stripe.com/xxxxxxxxxxxxxxxx"
 github: "https://github.com/bi4wms/example-board"
 ---
