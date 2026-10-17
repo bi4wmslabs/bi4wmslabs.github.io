@@ -12,7 +12,7 @@ breadcrumbs: true
 words_per_minute: 200
 logo: "/assets/images/bi4wms-mark.svg"
 masthead_title: "BI4WMS LABS"
-subtitle: "Open Hardware Labs"
+subtitle: 
 include:
   - _pages
 markdown: kramdown
