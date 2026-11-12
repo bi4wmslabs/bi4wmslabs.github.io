@@ -188,7 +188,11 @@
     /* --- 卡片链接 --- */
     ["Explore project →", "查看项目 →"],
     ["Details →", "详情 →"],
-    ["Price on request", "价格面议"]
+    ["Price on request", "价格面议"],
+
+    /* --- OCTET（DAQ205）：面包屑由主题用 page.title 生成，没有 data-zh，靠词典兜底 --- */
+    ["OCTET DAQ205 — 8-Channel IEPE DAQ", "OCTET DAQ205 八通道 IEPE 采集器"],
+    ["OCTET — 8-Channel IEPE Vibration DAQ", "OCTET 八通道 IEPE 振动采集器"]
   ];
 
   var TO_ZH = {}, TO_EN = {};
@@ -348,7 +352,7 @@
     });
   }
 
-  /* ---------- 10. 应用（顺序：data-zh → 正文块 → DICT → 标题 → 目录） ---------- */
+  /* ---------- 10. 应用（顺序：data-zh → 标题 → DICT → 目录） ---------- */
   function apply(lang) {
     langState = lang;
     root.setAttribute("data-lang", lang);
@@ -356,9 +360,11 @@
     if (!document.body) return;
     scanBlocks();
     applyBlocks(lang);
+    /* swapTitle 必须先于 swapDict：DICT 里若有与 h1 原文相同的词条（商品标题），
+       先跑 DICT 会把中文写进标题的 data-en 缓存，切回 EN 就还原不回去。 */
     swapDataZh(lang);
-    swapDict(lang);
     swapTitle(lang);
+    swapDict(lang);
     syncToc();
     syncButton(lang);
   }

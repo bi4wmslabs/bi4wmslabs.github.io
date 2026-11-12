@@ -107,7 +107,10 @@
     ["All projects →", "全部项目 →"],
     ["All notes →", "全部笔记 →"],
     ["Visit shop →", "进入商店 →"],
-    ["Price on request", "价格面议"]
+    ["Price on request", "价格面议"],
+    /* 面包屑由主题用 page.title 生成，没有 data-zh，靠词典兜底 */
+    ["OCTET DAQ205 — 8-Channel IEPE DAQ", "OCTET DAQ205 八通道 IEPE 采集器"],
+    ["OCTET — 8-Channel IEPE Vibration DAQ", "OCTET 八通道 IEPE 振动采集器"]
   ];
   var TO_ZH = {}, TO_EN = {};
   for (var d = 0; d < DICT.length; d++) {
@@ -274,9 +277,13 @@
     if (!document.body) return;
     scanBlocks();
     applyBlocks(lang);
-    swapDict(lang);
-    swapTitle(lang);
+    /* 顺序很重要：先让 [data-zh] / 标题缓存并写入文本。
+       若先跑 swapDict，页面以中文加载时这些元素缓存到的会是「已被词典替换过的中文」，
+       切回 EN 就还原不回去。词典兜底放最后，只处理没有 data-zh 的纯文本节点
+       （面包屑、通用按钮文案等）。 */
     swapDataZh(lang);
+    swapTitle(lang);
+    swapDict(lang);
     syncToc();
     syncButton(lang);
   }
