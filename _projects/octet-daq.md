@@ -8,6 +8,7 @@ category_zh: "振动数据采集"
 date: 2026-11-12
 featured: true
 pinned: true
+image: "/assets/images/projects/octet-daq.jpg"
 excerpt: "A compact 8-channel IEPE vibration DAQ: 24-bit simultaneous sampling up to 256 kSPS, onboard SD NAND recording and 100M Ethernet streaming."
 excerpt_zh: "8 通道 IEPE 振动采集器：24bit 同步采样最高 256 kSPS，板载 SD NAND 录制与百兆以太网实时流式输出。"
 ---

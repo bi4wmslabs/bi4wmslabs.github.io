@@ -44,6 +44,9 @@ body { background: var(--bi-paper); }
 .bi-card { border: 1px solid var(--bi-line); border-radius: .9rem; overflow: hidden; background: #fff; display: flex; flex-direction: column; min-width: 0; }
 /* 首页两个板块的第一张卡（pinned 主推条目）做轻微强调，不改变卡片结构 */
 .bi-card-grid-lead > .bi-card:first-child { border-color: var(--bi-accent); box-shadow: 0 8px 26px rgba(36, 99, 235, .10); }
+/* OCTET 上位机截图是 2:1 横图，卡片图位为 4:3：完整显示并补同色深底，
+   避免 object-fit: cover 把左上角 OCTET 标识和左侧设备信息栏裁掉。 */
+.bi-card-image[src*="octet"] { object-fit: contain; background: #1a1d22; }
 .bi-card-image-link { display: block; text-decoration: none !important; }
 .bi-card-image, .bi-card-placeholder { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
 .bi-card-placeholder, .bi-product-placeholder { background: linear-gradient(135deg, #e9edf2, #d8dee7); color: #202733; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 1.2rem; box-sizing: border-box; }

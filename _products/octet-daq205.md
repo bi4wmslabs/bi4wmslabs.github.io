@@ -9,6 +9,7 @@ summary: "Assembled 8-channel IEPE vibration DAQ with 24-bit simultaneous sampli
 summary_zh: "成品 8 通道 IEPE 振动采集器，24bit 同步采样，支持板载录制与以太网流式输出；价格与购买方式待公布。"
 featured: true
 pinned: true
+image: "/assets/images/products/octet-daq205.jpg"
 ---
 
 <!-- 页面大标题的中文（放在正文第一行，不会显示） -->
