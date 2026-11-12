@@ -59,7 +59,7 @@ State the hardware and firmware licenses, the warranty terms and the support cha
 - UDP 设备发现、TFTP 文件传输、USB 虚拟串口现场诊断
 - 带 CRC32 的二进制上位机协议，便于第三方集成
 
-完整规格见 [OCTET 项目页](/projects/octet-daq/)，实测结果与已知限制见 [设计与调试实录系列](/octet-series/)（共 5 篇）。
+完整规格见 [OCTET 项目页](/projects/octet-daq/)，实测结果与已知限制见 [设计与调试实录系列](/octet-series/)（共 7 篇）。
 
 ## 包含内容
 

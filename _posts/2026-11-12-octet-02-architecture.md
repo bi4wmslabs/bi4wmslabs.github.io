@@ -15,7 +15,7 @@ permalink: /posts/octet-02-architecture/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 2 of 5 · [Series index](/octet-series/) · [Prev](/posts/octet-01-requirements/) · [Next →](/posts/octet-03-usb-enumeration/)
+> **OCTET series** · Part 2 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-01-requirements/) · [Next →](/posts/octet-03-usb-enumeration/)
 
 ## Decompose by data flow, not by feature list
 
@@ -120,7 +120,7 @@ These repeatedly saved the project: several bugs were localized when logs were d
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 2 篇 / 共 5 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-01-requirements/) · [下一篇 →](/posts/octet-03-usb-enumeration/)
+> **OCTET 系列** · 第 2 篇 / 共 7 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-01-requirements/) · [下一篇 →](/posts/octet-03-usb-enumeration/)
 
 ## 一、功能分解：从需求到模块
 

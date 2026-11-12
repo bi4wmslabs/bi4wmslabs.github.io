@@ -15,7 +15,7 @@ permalink: /posts/octet-03-usb-enumeration/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 3 of 5 · [Series index](/octet-series/) · [Prev](/posts/octet-02-architecture/) · [Next →](/posts/octet-04-debugging-adc-sd/)
+> **OCTET series** · Part 3 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-02-architecture/) · [Next →](/posts/octet-04-debugging-adc-sd/)
 
 The first lifeline of the device is the USB virtual COM port — all logs and the diagnostic shell depend on it. This "standard peripheral" cost us two days and ten rounds of debugging, and the story collects almost every classic USB trap.
 
@@ -87,7 +87,7 @@ Weeks later, two more: concurrent log writers (tasks + USB ISR) deadlocked the C
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 3 篇 / 共 5 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-02-architecture/) · [下一篇 →](/posts/octet-04-debugging-adc-sd/)
+> **OCTET 系列** · 第 3 篇 / 共 7 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-02-architecture/) · [下一篇 →](/posts/octet-04-debugging-adc-sd/)
 
 设备的第一条调试命脉是 USB 虚拟串口——日志、命令行全靠它。然而这个"标准外设"折磨了我们整整两天，前后十轮排查。把这段过程写下来，是因为它集齐了 USB 调试中几乎所有的经典陷阱。
 

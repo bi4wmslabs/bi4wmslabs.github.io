@@ -15,9 +15,11 @@ permalink: /posts/octet-05-protocol-and-product/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 5 of 5 · [Series index](/octet-series/) · [Prev](/posts/octet-04-debugging-adc-sd/)
+> **OCTET series** · Part 5 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-04-debugging-adc-sd/) · [Next →](/posts/octet-06-user-manual/)
 
 ## A binary protocol designed for third parties
+
+> **Update:** the released V1.4 specification is published as [part 7](/posts/octet-07-protocol-spec/). The frame layout below is an early design draft.
 
 When a device is sold to customers and integrated into their systems, the protocol document is a second product. Three principles only: **fixed header, CRC32 over header+payload, structs that map 1:1 onto the wire**.
 
@@ -95,7 +97,7 @@ Two months from the first line of firmware to the 1.2.0 release build. The most 
 2. **Observability is designed, not retrofitted** — live_trace, CDC commands and LED diagnostic bits were in the architecture from the requirements stage;
 3. **Documentation is product** — protocol spec, manual, and selftest ship with the firmware in version control, or third-party integration and after-sales support never happen.
 
-*Series complete.*
+*The five design notes end here. The formal release documents follow in parts 6 and 7.*
 
 </div>
 
@@ -103,9 +105,11 @@ Two months from the first line of firmware to the 1.2.0 release build. The most 
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 5 篇 / 共 5 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-04-debugging-adc-sd/)
+> **OCTET 系列** · 第 5 篇 / 共 7 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-04-debugging-adc-sd/) · [下一篇 →](/posts/octet-06-user-manual/)
 
 ## 一、二进制协议：为第三方集成而设计
+
+> **更新**：正式发布的 V1.4 协议文档见[第 7 篇](/posts/octet-07-protocol-spec/)；下文帧结构为早期设计草稿。
 
 设备要卖给客户、要被客户的系统集成，协议文档就是第二份产品。设计原则只有三条：**定长帧头、CRC32 全覆盖、结构体对齐即字节序**。
 
@@ -189,6 +193,6 @@ PyInstaller `--onefile --windowed`，排除 numpy/matplotlib 等拖体积的依�
 2. **可观测性是设计出来的**：live_trace、CDC 命令、LED 诊断位在需求阶段就写进了架构，调试时才有得用；
 3. **文档即产品**：协议文档、说明书、selftest 和固件一起进入版本管理，第三方集成、售后维护、二次开发才有可能。
 
-*系列完。*
+*设计笔记五篇到此结束；正式交付文档见第 6、7 篇。*
 
 </div>

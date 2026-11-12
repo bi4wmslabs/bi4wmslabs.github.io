@@ -44,6 +44,11 @@ body { background: var(--bi-paper); }
 .bi-card { border: 1px solid var(--bi-line); border-radius: .9rem; overflow: hidden; background: #fff; display: flex; flex-direction: column; min-width: 0; }
 /* 首页两个板块的第一张卡（pinned 主推条目）做轻微强调，不改变卡片结构 */
 .bi-card-grid-lead > .bi-card:first-child { border-color: var(--bi-accent); box-shadow: 0 8px 26px rgba(36, 99, 235, .10); }
+/* 板块里只剩一个条目时，卡片占满整行但限制宽度并居中，避免三列网格右侧大片留白 */
+.bi-card-grid > .bi-card:only-child { grid-column: 1 / -1; width: 100%; max-width: 720px; margin-inline: auto; }
+.bi-card-grid > .bi-card:only-child .bi-card-body { padding: 1.4rem 1.6rem 1.6rem; }
+.bi-card-grid > .bi-card:only-child .bi-card h3 { font-size: 1.45rem; }
+.bi-card-grid > .bi-card:only-child .bi-card-body > p:not(.bi-card-kicker) { font-size: 1rem; }
 /* OCTET 上位机截图是 2:1 横图，卡片图位为 4:3：完整显示并补同色深底，
    避免 object-fit: cover 把左上角 OCTET 标识和左侧设备信息栏裁掉。 */
 .bi-card-image[src*="octet"] { object-fit: contain; background: #1a1d22; }

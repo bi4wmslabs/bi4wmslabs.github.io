@@ -15,7 +15,7 @@ permalink: /posts/octet-04-debugging-adc-sd/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 4 of 5 · [Series index](/octet-series/) · [Prev](/posts/octet-03-usb-enumeration/) · [Next →](/posts/octet-05-protocol-and-product/)
+> **OCTET series** · Part 4 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-03-usb-enumeration/) · [Next →](/posts/octet-05-protocol-and-product/)
 
 With USB alive, the real fight began: getting 8-channel 24-bit data from the ADC onto the PC screen. Five deep pits, one story each.
 
@@ -84,7 +84,7 @@ At 32 kSPS everything was stable; the fault code 7 appeared at 256 k. Three culp
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 4 篇 / 共 5 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-03-usb-enumeration/) · [下一篇 →](/posts/octet-05-protocol-and-product/)
+> **OCTET 系列** · 第 4 篇 / 共 7 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-03-usb-enumeration/) · [下一篇 →](/posts/octet-05-protocol-and-product/)
 
 USB 通了之后，真正的硬仗才开始：让 8 通道 24bit 数据从 ADC 流到电脑屏幕上。这一路踩了五口"深井"，每口井都值得单独写一段。
 

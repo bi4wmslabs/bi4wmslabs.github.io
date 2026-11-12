@@ -15,7 +15,7 @@ permalink: /posts/octet-01-requirements/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 1 of 5 · [Series index](/octet-series/) · [Next →](/posts/octet-02-architecture/)
+> **OCTET series** · Part 1 of 7 · [Series index](/octet-series/) · [Next →](/posts/octet-02-architecture/)
 
 ## What problem are we solving
 
@@ -87,7 +87,7 @@ Half of the bugs we hit later were already anticipated at the requirements stage
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 1 篇 / 共 5 篇 · [系列目录](/octet-series/) · [下一篇 →](/posts/octet-02-architecture/)
+> **OCTET 系列** · 第 1 篇 / 共 7 篇 · [系列目录](/octet-series/) · [下一篇 →](/posts/octet-02-architecture/)
 
 ## 一、产品要解决什么问题
 

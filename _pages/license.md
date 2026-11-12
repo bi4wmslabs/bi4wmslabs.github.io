@@ -18,4 +18,4 @@ Before accepting orders, publish accurate shipping regions, dispatch estimates, 
 
 ## Contact
 
-Replace `YOUR_EMAIL@example.com` with your contact email before launch. This starter template is not legal or tax advice; adapt the policies to your actual business and applicable law.
+For questions about licensing or store policies, contact [bi4wms@gmail.com](mailto:bi4wms@gmail.com). This page is general information, not legal or tax advice.
