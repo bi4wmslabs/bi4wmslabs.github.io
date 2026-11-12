@@ -18,19 +18,16 @@ layout: single
     {% if page.price and page.price != "TBD" %}
       <div class="bi-price"{% if page.price_zh %} data-zh="{{ page.price_zh | escape }}"{% endif %}>{{ page.price }}</div>
     {% else %}
-      <div class="bi-price" data-zh="价格待定">Coming soon</div>
+      <div class="bi-price" data-zh="询价">Price on request</div>
     {% endif %}
     <p{% if page.summary_zh %} data-zh="{{ page.summary_zh | escape }}"{% endif %}>{{ page.summary }}</p>
     {% if page.checkout_url and page.checkout_url != "YOUR_CHECKOUT_URL" %}
       <a class="bi-button bi-button-primary bi-buy-button" href="{{ page.checkout_url }}" rel="nofollow sponsored" data-zh="立即购买 ↗">Buy now ↗</a>
     {% else %}
       <a class="bi-button bi-button-primary bi-buy-button" href="mailto:bi4wms@gmail.com?subject={{ page.title | uri_escape }}%20enquiry" data-zh="咨询此商品 ↗">Enquire about this item ↗</a>
-      <p class="bi-small-note" data-zh="结账链接尚未配置，正式开售前请在该商品的 front matter 中补充。">Checkout link not configured yet. Replace the placeholder in this product's front matter before launch.</p>
     {% endif %}
     {% if page.github and page.github != "YOUR_PROJECT_REPOSITORY" %}
       <a class="bi-text-link" href="{{ page.github }}" data-zh="在 GitHub 查看项目源码 ↗">View project source on GitHub ↗</a>
     {% endif %}
-    <hr>
-    <p class="bi-small-note" data-zh="下单前请先阅读下方的内容清单、许可、兼容性说明、配送条款与支持政策。">Before ordering, review the included files or hardware, license, compatibility notes, shipping details, and support policy below.</p>
   </aside>
 </div>

@@ -37,41 +37,29 @@
 <!-- ===== bi4wms 中英切换（内联于母版，全站每页必执行） ===== -->
 <script>
 /* =========================================================
-   bi4wms · 中英切换引擎 v6
+   bi4wms · 中英切换引擎 v6（全站唯一）
    ---------------------------------------------------------
-   加载方式（任选，推荐 A）：
-     A. 新建 _layouts/default.html，把本文件内联进 </body> 前
-     B. 存成 assets/js/i18n.js，在 _config.yml 加
-        after_footer_scripts:
-          - /assets/js/i18n.js
+   位置：_layouts/default.html 末尾，内联执行，每个页面都会加载。
+   历史：v4（_includes/head/custom.html 内联）与 v5
+         （assets/js/i18n.js）已删除；head/custom.html 现在只做
+         首屏语言预置，不再包含任何切换逻辑。
+         以后加词条、改切换规则，只改这一处。
 
-   ★ v6 修复了三个真实缺陷
-     1) DICT 不完整：v5 只覆盖了项目/商品名，主页 Hero、按钮、
-        区块标题大量文案没进字典 → 主页点了没反应
-        → v6 按 index.html 实际文本逐条补全
-     2) h1 被 <br> 拆成两个文本节点：v5 只有 "Better Hardware"，
-        没有 "for Open Source." → 标题只切换一半
-        → v6 两条都补
-     3) DICT 与 data-zh 打架：swapDict 先跑会把文本改成中文，
-        导致 swapDataZh 把中文当成"英文原文"存进 data-en，
-        切回 EN 时还原成中文 → 卡片标题错乱
-        → v6 让 swapDict 跳过 [data-zh] 元素内部，两者互不干涉
+   1) 正文双语块：哨兵 .bi-lang-mark[data-lang] → 打 data-bi-lang → 控制 display
+   2) [data-zh]        → 卡片标题/摘要/分类等短字段（front matter 的 *_zh）
+   3) [data-zh-title]  → 页面大标题 h1
+   4) syncToc()        → 目录项跟随当前语言显隐
+   5) DICT 兜底        → 主题生成、没有 *_zh 字段的界面文案
 
-   功能：
-     1) 正文双语块：哨兵 .bi-lang-mark[data-lang] → 打 data-bi-lang → 控制 display
-     2) [data-zh]        → 卡片标题/摘要/分类等短字段（来自 front matter 的 *_zh）
-     3) [data-zh-title]  → 页面大标题 h1
-     4) syncToc()        → 目录项跟随当前语言显隐
-     5) DICT 兜底        → 界面文案
-
-   原则：切回 EN 是「原文还原」，不是二次翻译。
+   关键约束：
+   - swapTitle 必须先于 swapDict，否则标题会把译文缓存成英文原文；
+   - swapDict 跳过 [data-zh] 元素内部，两者互不干涉；
+   - 切回 EN 是「原文还原」，不是二次翻译。
    ========================================================= */
 (function () {
   "use strict";
 
-  /* ---- 置位标志：让其它版本别再建第二个按钮 ---- */
-  window.__BI_I18N_DONE__ = true;
-  window.__BI_I18N_V4__ = true;
+  /* 全站唯一引擎：按钮只在这里建一次 */
 
   var STORAGE_KEY = "bi4wms-lang";
   var root = document.documentElement;
@@ -151,30 +139,6 @@
     ["Enter your search term...", "输入搜索关键词…"],
     ["Search", "搜索"],
 
-    /* --- 项目 --- */
-    ["SimpleFOC Controller", "SimpleFOC 控制器"],
-    ["Word Clock", "文字时钟"],
-    ["MiniMultiScope", "MiniMultiScope 迷你示波器"],
-    ["uPower", "uPower 电源"],
-    ["A compact motor-control board concept for experimenting with open-source FOC and small BLDC motors.",
-     "用于试验开源 FOC 与小型无刷电机的紧凑型电机控制板方案。"],
-    ["A carefully assembled word-clock project combining custom electronics, a display panel, and open firmware.",
-     "精心组装的文字时钟项目，融合定制电路、显示面板与开源固件。"],
-    ["A compact STM32-based hardware project for exploring signal acquisition and measurement.",
-     "基于 STM32 的紧凑型硬件项目，用于探索信号采集与测量。"],
-
-    /* --- 商品 --- */
-    ["SimpleFOC Controller Design Files", "SimpleFOC 控制器设计文件"],
-    ["Word Clock DIY Kit", "文字时钟 DIY 套件"],
-    ["Word Clock — Assembled", "文字时钟 — 成品"],
-    ["Word Clock - Assembled", "文字时钟 — 成品"],
-    ["uPower DIY Kit", "uPower DIY 套件"],
-    ["A prepared design-file bundle for builders who want to fabricate and assemble the controller.",
-     "面向希望自行打样与组装控制器的制作者的成品设计文件包。"],
-    ["A DIY hardware kit for building the word clock. Confirm the exact contents before listing.",
-     "用于制作文字时钟的 DIY 硬件套件。上架前请确认具体内容清单。"],
-    ["A DIY hardware kit for uPower.", "uPower 的 DIY 硬件套件。"],
-
     /* --- 分类标签 --- */
     ["Motor Control", "电机控制"],
     ["Desktop Electronics", "桌面电子"],
@@ -188,7 +152,7 @@
     /* --- 卡片链接 --- */
     ["Explore project →", "查看项目 →"],
     ["Details →", "详情 →"],
-    ["Price on request", "价格面议"],
+    ["Price on request", "询价"],
 
     /* --- OCTET（DAQ205）：面包屑由主题用 page.title 生成，没有 data-zh，靠词典兜底 --- */
     ["OCTET DAQ205 — 8-Channel IEPE DAQ", "OCTET DAQ205 八通道 IEPE 采集器"],
@@ -371,11 +335,6 @@
 
   /* ---------- 11. 启动 ---------- */
   function boot() {
-    /* 强制清掉任何旧版本建的按钮（.bi-lang 是 v1，#bi-lang-switch 可能是 v4/v5） */
-    var olds = document.querySelectorAll("#bi-lang-switch, .bi-lang");
-    for (var oi = 0; oi < olds.length; oi++) {
-      if (olds[oi].parentNode) olds[oi].parentNode.removeChild(olds[oi]);
-    }
     buildButton();
     apply(saved);
     syncTocSoon();

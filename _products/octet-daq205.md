@@ -10,6 +10,8 @@ summary_zh: "成品 8 通道 IEPE 振动采集器，24bit 同步采样，支持�
 featured: true
 pinned: true
 image: "/assets/images/products/octet-daq205.jpg"
+price: "Price on request"
+price_zh: "询价"
 ---
 
 <!-- 页面大标题的中文（放在正文第一行，不会显示） -->
