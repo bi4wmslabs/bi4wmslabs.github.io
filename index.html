@@ -21,8 +21,17 @@ permalink: /
     <div><p class="bi-eyebrow">BUILD SOMETHING USEFUL</p><h2>Featured projects</h2></div>
     <a href="{{ '/projects/' | relative_url }}">All projects →</a>
   </div>
-  <div class="bi-card-grid">
-    {% assign featured_projects = site.projects | where: "featured", true %}
+  <div class="bi-card-grid bi-card-grid-lead">
+    {% comment %}
+      置顶规则：featured: true 且 pinned: true 的项目永远排在前面，
+      其余项目保持 collection 默认顺序不变。想换主推项目，只需把
+      pinned: true 挪到对应条目的 front matter；无需改动本页。
+    {% endcomment %}
+    {% assign all_featured = site.projects | where: "featured", true %}
+    {% assign pinned_projects = all_featured | where: "pinned", true | sort: "date" | reverse %}
+    {% assign other_projects = "" | split: "," %}
+    {% for item in all_featured %}{% unless item.pinned %}{% assign other_projects = other_projects | push: item %}{% endunless %}{% endfor %}
+    {% assign featured_projects = pinned_projects | concat: other_projects %}
     {% for item in featured_projects limit: 3 %}
       {% include project-card.html item=item %}
     {% endfor %}
@@ -34,8 +43,16 @@ permalink: /
     <div><p class="bi-eyebrow">DESIGN FILES & PHYSICAL HARDWARE</p><h2>Hardware shop</h2></div>
     <a href="{{ '/shop/' | relative_url }}">Visit shop →</a>
   </div>
-  <div class="bi-card-grid">
-    {% assign featured_products = site.products | where: "featured", true %}
+  <div class="bi-card-grid bi-card-grid-lead">
+    {% comment %}
+      与上方 Featured projects 同样的置顶规则：pinned: true 的商品优先，
+      其余商品保持 collection 默认顺序（文件名升序）不变。
+    {% endcomment %}
+    {% assign all_featured_products = site.products | where: "featured", true %}
+    {% assign pinned_products = all_featured_products | where: "pinned", true %}
+    {% assign other_products = "" | split: "," %}
+    {% for item in all_featured_products %}{% unless item.pinned %}{% assign other_products = other_products | push: item %}{% endunless %}{% endfor %}
+    {% assign featured_products = pinned_products | concat: other_products %}
     {% for item in featured_products limit: 3 %}
       {% include product-card.html item=item %}
     {% endfor %}
