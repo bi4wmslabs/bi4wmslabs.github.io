@@ -3,7 +3,7 @@ title: "OCTET #2: Functional Decomposition and Embedded Software Architecture"
 title_zh: "OCTET 02 · 系统功能分解与嵌入式软件架构"
 excerpt: "Splitting a DAQ by data flow and control flow: tasks, ring buffers, and a firmware black box."
 excerpt_zh: "按数据流与控制流拆解一台采集器：任务划分、环形缓冲与固件黑匣子。"
-date: 2026-11-12 10:00:00 +0800
+date: 2026-10-08 22:10:00 +0800
 categories: [octet, firmware]
 tags: [freertos, lwip, architecture, stm32h7]
 permalink: /posts/octet-02-architecture/

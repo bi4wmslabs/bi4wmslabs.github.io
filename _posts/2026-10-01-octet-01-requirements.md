@@ -3,7 +3,7 @@ title: "OCTET #1: Requirements and System Design of an 8-Channel IEPE DAQ"
 title_zh: "OCTET 01 · 八通道 IEPE 采集器的需求分析与总体方案"
 excerpt: "How we froze the specs, picked the parts, and made three decisions that saved us later."
 excerpt_zh: "指标如何冻结、器件如何选型，以及三个在后期救了我们的需求决策。"
-date: 2026-11-12 09:00:00 +0800
+date: 2026-10-01 21:30:00 +0800
 categories: [octet, firmware]
 tags: [requirements, architecture, stm32h7, ad7768]
 permalink: /posts/octet-01-requirements/

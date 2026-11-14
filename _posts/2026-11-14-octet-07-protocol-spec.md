@@ -3,7 +3,7 @@ title: "OCTET #7: Communication Protocol and Data Format, V1.4"
 title_zh: "OCTET 07 · 通信协议与数据格式说明 V1.4"
 excerpt: "The official protocol spec: 16-byte frame header, command set, data/event/DIO frames, storage file layout, TFTP channel and UDP discovery."
 excerpt_zh: "正式协议文档全文：16 字节帧头、命令集、数据/事件/数字量帧、存储文件格式、TFTP 文件通道与 UDP 发现。"
-date: 2026-11-12 17:00:00 +0800
+date: 2026-11-14 09:40:00 +0800
 categories: [octet, documentation]
 tags: [protocol, daq001, binary-protocol, python]
 permalink: /posts/octet-07-protocol-spec/
@@ -23,7 +23,7 @@ permalink: /posts/octet-07-protocol-spec/
 `dev_info.name` is `OCTET`. Internal model DAQ001: the storage directory `/DAQ001/DATA`, the
 recording filenames and the protocol magic `"D205BIN"` are unchanged.
 
-**Firmware** 1.2.0 · **Publisher** BI4WMS LABS · 2026-11-12
+**Firmware** 1.2.0 · **Publisher** BI4WMS LABS · 2026-11-14
 
 This document is for third-party developers who want to **build their own host software, integrate
 control, or post-process data**. The device defaults to `192.168.66.55`, with TCP command/data port
@@ -365,7 +365,7 @@ development.
 `dev_info.name` 为 `OCTET`。内部型号 DAQ001：存储目录 `/DAQ001/DATA`、录制文件名
 与协议 magic `"D205BIN"` 保持不变。
 
-**对应固件** 1.2.0 · **发布** BI4WMS LABS · 2026-11-12
+**对应固件** 1.2.0 · **发布** BI4WMS LABS · 2026-11-14
 
 本文面向需要 **自行开发上位机 / 集成控制 / 数据后处理** 的第三方开发者。
 设备默认地址 `192.168.66.55`，TCP 命令/数据端口 `5000`，UDP 发现端口 `5001`，

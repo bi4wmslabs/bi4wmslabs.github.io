@@ -3,7 +3,7 @@ title: "OCTET #6: DAQ001 User Manual, V1.5"
 title_zh: "OCTET 06 · DAQ001 使用说明书 V1.5"
 excerpt: "The official user manual: connectors and LEDs, quick start, host software pages, recording file formats, fault codes and FAQ."
 excerpt_zh: "正式使用说明书全文：接口与指示灯、快速上手、上位机各功能页、录制文件格式、故障码与常见问题。"
-date: 2026-11-12 16:00:00 +0800
+date: 2026-11-09 20:30:00 +0800
 categories: [octet, documentation]
 tags: [manual, daq001, iepe, host-software]
 permalink: /posts/octet-06-user-manual/
@@ -22,7 +22,7 @@ permalink: /posts/octet-06-user-manual/
 **Product name** **OCTET** (Octal-Channel Transducer & Event Telemetry)
 **Internal model** DAQ001 — storage directory `/DAQ001/DATA` and recording filenames follow this model number; the protocol magic is unchanged
 **Document version** V1.5 · **Firmware** 1.2.0 · **Host software** 1.2.0
-**Released** 2026-11-12 · **Developed / copyright** BI4WMS LABS
+**Released** 2026-11-09 · **Developed / copyright** BI4WMS LABS
 
 ---
 
@@ -357,7 +357,7 @@ Free storage is below 10 MB — copy the data off and clean up promptly.
 **产品代号** **OCTET**（Octal-Channel Transducer & Event Telemetry，八通道传感与事件遥测）
 **内部型号** DAQ001（存储目录 `/DAQ001/DATA`、录制文件名均按 DAQ001 命名，协议 magic 不变）
 **文档版本** V1.5 · 对应固件 **1.2.0** · 对应上位机 **1.2.0**
-**发布日期** 2026-11-12 · **开发 / 版权** BI4WMS LABS
+**发布日期** 2026-11-09 · **开发 / 版权** BI4WMS LABS
 
 ---
 

@@ -3,7 +3,7 @@ title: "OCTET #5: Protocol Design, Host Software and Product Release"
 title_zh: "OCTET 05 · 通信协议、上位机与产品化交付"
 excerpt: "A binary protocol built for third-party integration, a frame-hungry-proof host architecture, and the productization checklist."
 excerpt_zh: "为第三方集成而设计的二进制协议、防吃帧的上位机架构，以及产品化收尾清单。"
-date: 2026-11-12 14:00:00 +0800
+date: 2026-11-02 21:15:00 +0800
 categories: [octet, firmware]
 tags: [protocol, python, gui, product]
 permalink: /posts/octet-05-protocol-and-product/

@@ -3,7 +3,7 @@ title: "OCTET #3: Ten Rounds of USB CDC Enumeration Debugging"
 title_zh: "OCTET 03 · USB 虚拟串口的十轮攻防"
 excerpt: "Every classic USB trap in one story: a missing PLL output-enable bit, EP0 skipped, cold-plug PHY power, and a leaking BASEPRI."
 excerpt_zh: "一个故事集齐 USB 经典陷阱：PLL 输出使能位缺失、EP0 被跳过、冷插拔 PHY 供电与 BASEPRI 泄漏。"
-date: 2026-11-12 11:00:00 +0800
+date: 2026-10-17 20:45:00 +0800
 categories: [octet, firmware]
 tags: [usb, cdc, debugging, stm32h7]
 permalink: /posts/octet-03-usb-enumeration/

@@ -3,7 +3,7 @@ title: "OCTET #4: Off-Frame SPI, SD Overruns and the 256 kSPS Battle"
 title_zh: "OCTET 04 · 离帧协议、RX_OVERRUN 与 256 kSPS 攻坚"
 excerpt: "Five deep pits between 'the chip is alive' and 'the waveform is on screen': off-frame SPI, a 1-DCLK offset, IDMA, an 8 KB stack overflow and a frame-hungry host."
 excerpt_zh: "从'芯片活着'到'波形上屏'之间的五口深井：离帧 SPI、1 个 DCLK 偏移、IDMA、8KB 栈溢出与吃帧的上位机。"
-date: 2026-11-12 13:00:00 +0800
+date: 2026-10-26 23:05:00 +0800
 categories: [octet, firmware]
 tags: [spi, sdmmc, dma, debugging, ad7768]
 permalink: /posts/octet-04-debugging-adc-sd/
