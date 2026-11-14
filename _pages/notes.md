@@ -13,6 +13,7 @@ layout: home
       <article class="bi-post-row">
         <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>
         <div>
+          {% if post.series %}<p class="bi-post-series" data-zh="{{ post.series }} · 第 {{ post.series_no }} 篇 / 共 {{ post.series_total }} 篇">OCTET DAQ001 · 8-Channel IEPE DAQ · Part {{ post.series_no }} of {{ post.series_total }}</p>{% endif %}
           <h2>
             <a href="{{ post.url | relative_url }}"{% if post.title_zh %} data-zh="{{ post.title_zh | escape }}"{% endif %}>{{ post.title }}</a>
           </h2>

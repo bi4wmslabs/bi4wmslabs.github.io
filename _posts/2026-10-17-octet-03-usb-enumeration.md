@@ -7,6 +7,9 @@ date: 2026-10-17 20:45:00 +0800
 categories: [octet, firmware]
 tags: [usb, cdc, debugging, stm32h7]
 permalink: /posts/octet-03-usb-enumeration/
+series: "OCTET DAQ001 八通道 IEPE 采集器"
+series_no: 3
+series_total: 7
 ---
 
 <span data-zh-title="所有初始化都返回 OK，USB 设备却永远不出现" hidden></span>
@@ -15,7 +18,10 @@ permalink: /posts/octet-03-usb-enumeration/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-**OCTET series** · Part 3 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-02-architecture/) · [Next →](/posts/octet-04-debugging-adc-sd/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 3 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-02-architecture/">← Prev</a> · <a href="/posts/octet-04-debugging-adc-sd/">Next →</a></p>
+</div>
 
 Every initialisation call returned HAL_OK. The clock tree checked out, the GPIO alternate functions were right, the descriptors looked correct, and the serial log printed "init success" eight times. Then we plugged the board in and the device manager showed nothing at all — not "unknown device", nothing, as if the cable were not connected.
 
@@ -37,7 +43,10 @@ Two smaller ones cost half a day each: a callback returning early so EP0 was ski
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> OCTET 系列 · 第 3 篇 / 共 7 篇 · [系列目录](/octet-series/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
+  <p class="bi-series-nav">设计与调试实录 · 第 3 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-02-architecture/">← 上一篇</a> · <a href="/posts/octet-04-debugging-adc-sd/">下一篇 →</a></p>
+</div>
 
 这是整个项目里最荒谬的两天：`HAL_PCD_Init()` 返回 HAL_OK，时钟配置返回 HAL_OK，中断使能也返回 HAL_OK，串口日志一行行打出来，“初始化成功”打了七八遍。然后插上电脑，设备管理器里什么都没有。不是“无法识别”，是**什么都没有**——像这根线根本没插。
 

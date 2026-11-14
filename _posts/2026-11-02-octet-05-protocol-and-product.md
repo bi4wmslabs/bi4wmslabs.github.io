@@ -7,6 +7,9 @@ date: 2026-11-02 21:15:00 +0800
 categories: [octet, firmware]
 tags: [protocol, python, gui, product]
 permalink: /posts/octet-05-protocol-and-product/
+series: "OCTET DAQ001 八通道 IEPE 采集器"
+series_no: 5
+series_total: 7
 ---
 
 <span data-zh-title="6.2 MB/s 的数据流，上位机为什么卡成幻灯片" hidden></span>
@@ -15,7 +18,10 @@ permalink: /posts/octet-05-protocol-and-product/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-**OCTET series** · Part 5 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-04-debugging-adc-sd/) · [Next →](/posts/octet-06-user-manual/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 5 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-04-debugging-adc-sd/">← Prev</a> · <a href="/posts/octet-06-user-manual/">Next →</a></p>
+</div>
 
 The device side was finally correct and the link was stable, but the waveform on screen moved like a stop-motion animation. At eight channels and 256 kSPS it nearly froze, and dragging the window locked the UI for hundreds of milliseconds. A packet capture showed every byte arriving — the problem was not transport.
 
@@ -37,7 +43,10 @@ Measured after the rewrite: 0.089 ms to decode and enqueue one block, 8.6 ms per
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> OCTET 系列 · 第 5 篇 / 共 7 篇 · [系列目录](/octet-series/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
+  <p class="bi-series-nav">设计与调试实录 · 第 5 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-04-debugging-adc-sd/">← 上一篇</a> · <a href="/posts/octet-06-user-manual/">下一篇 →</a></p>
+</div>
 
 设备端的数据已经对了，网络也稳定，可屏幕上的波形像卡了帧的动画：走两步停一下，拖动窗口直接冻住。8 通道 256 kSPS 时更夸张，几乎定格。最初以为是网络不够快，抓包一看——数据一个不少，全都到了。**问题不在传输，在画图。**
 

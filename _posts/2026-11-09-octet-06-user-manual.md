@@ -7,6 +7,9 @@ date: 2026-11-09 20:30:00 +0800
 categories: [octet, documentation]
 tags: [manual, daq001, iepe, host-software]
 permalink: /posts/octet-06-user-manual/
+series: "OCTET DAQ001 八通道 IEPE 采集器"
+series_no: 6
+series_total: 7
 ---
 
 <span data-zh-title="12 颗指示灯，灯语被推翻了三次" hidden></span>
@@ -15,7 +18,10 @@ permalink: /posts/octet-06-user-manual/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-**OCTET series** · Part 6 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-05-protocol-and-product/) · [Next →](/posts/octet-07-protocol-spec/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 6 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-05-protocol-and-product/">← Prev</a> · <a href="/posts/octet-07-protocol-spec/">Next →</a></p>
+</div>
 
 The PCB reserved space for twelve channel LEDs. The first indicator table was written and immediately undone by one question from a field engineer: "the unit is recording — which LED tells me that?"
 
@@ -38,7 +44,10 @@ The "returning" clause mattered most: without it the light latches in the alarm 
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> OCTET 系列 · 第 6 篇 / 共 7 篇 · [系列目录](/octet-series/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
+  <p class="bi-series-nav">设计与调试实录 · 第 6 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-05-protocol-and-product/">← 上一篇</a> · <a href="/posts/octet-07-protocol-spec/">下一篇 →</a></p>
+</div>
 
 硬件画板的时候留了 12 颗通道灯的位置。等软件接手，第一版灯语表写完，被现场工程师一句话问住：“设备在录数据，我看哪颗灯？”——那一刻才发现，我们定义了 12 颗灯怎么亮，却没定义**人怎么用它判断状态**。
 

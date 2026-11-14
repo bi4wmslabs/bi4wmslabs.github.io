@@ -7,6 +7,9 @@ date: 2026-10-08 22:10:00 +0800
 categories: [octet, firmware]
 tags: [freertos, lwip, architecture, stm32h7]
 permalink: /posts/octet-02-architecture/
+series: "OCTET DAQ001 八通道 IEPE 采集器"
+series_no: 2
+series_total: 7
 ---
 
 <span data-zh-title="256kSPS 一开就丢块，问题不在采样率，在缓冲深度" hidden></span>
@@ -15,7 +18,10 @@ permalink: /posts/octet-02-architecture/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-**OCTET series** · Part 2 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-01-requirements/) · [Next →](/posts/octet-03-usb-enumeration/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 2 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-01-requirements/">← Prev</a> · <a href="/posts/octet-03-usb-enumeration/">Next →</a></p>
+</div>
 
 The scope trace was clean, but the host log kept printing fault code 7. It only appeared with all eight channels at 256 kSPS, and disappeared at 128 kSPS. The obvious reading was "not enough bandwidth" — but the failure was intermittent, not steady, and it improved when we enabled fewer channels. Bandwidth does not work that way.
 
@@ -37,7 +43,10 @@ The fix had three parts: deepen the buffer from 12 to 24 blocks (24 ms of slack,
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> OCTET 系列 · 第 2 篇 / 共 7 篇 · [系列目录](/octet-series/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
+  <p class="bi-series-nav">设计与调试实录 · 第 2 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-01-requirements/">← 上一篇</a> · <a href="/posts/octet-03-usb-enumeration/">下一篇 →</a></p>
+</div>
 
 示波器上波形是好的，上位机日志里却在刷故障码 7。只有在 8 通道 × 256 kSPS 全开时出现，降到 128 k 就干干净净。整个系统看起来“带宽不够”，但真正的账，错在一个很多人会随手填的数字上。
 

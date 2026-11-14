@@ -7,6 +7,9 @@ date: 2026-10-01 21:30:00 +0800
 categories: [octet, firmware]
 tags: [requirements, architecture, stm32h7, ad7768]
 permalink: /posts/octet-01-requirements/
+series: "OCTET DAQ001 八通道 IEPE 采集器"
+series_no: 1
+series_total: 7
 ---
 
 <span data-zh-title="8 通道 24bit 同步采样，为什么最后放弃了更快的 SAR 型 ADC" hidden></span>
@@ -15,7 +18,10 @@ permalink: /posts/octet-01-requirements/
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-**OCTET series** · Part 1 of 7 · [Series index](/octet-series/) · [Next →](/posts/octet-02-architecture/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 1 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-02-architecture/">Next →</a></p>
+</div>
 
 We opened the third selection meeting with three datasheets on the table, and everyone assumed SAR. It is fast, cheap, and has no group delay — the default answer for high-speed acquisition. The part we shipped is a delta-sigma converter.
 
@@ -39,7 +45,10 @@ We also deleted two parts on the same logic: an external EEPROM and a NOR flash 
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> OCTET 系列 · 第 1 篇 / 共 7 篇 · [系列目录](/octet-series/)
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
+  <p class="bi-series-nav">设计与调试实录 · 第 1 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-02-architecture/">下一篇 →</a></p>
+</div>
 
 选型会开到第三次，桌上摊着三份 ADC 规格书。所有人都觉得应该选 SAR——它快、便宜、没有群延迟，是“高速采集”的默认答案。最后定下来的却是 Σ-Δ。这篇记录那次论证怎么推翻直觉的。
 

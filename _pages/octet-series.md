@@ -1,15 +1,20 @@
 ---
-title: "OCTET Series: Design & Debugging Notes"
-title_zh: "OCTET（DAQ001）设计与调试实录系列"
+title: "OCTET DAQ001 · 8-Channel IEPE Acquisition Unit — Design & Debugging Notes"
+title_zh: "OCTET DAQ001 八通道 IEPE 采集器 · 设计与调试实录"
 permalink: /octet-series/
 layout: single
 ---
 
-<span data-zh-title="OCTET（DAQ001）设计与调试实录" hidden></span>
+<span data-zh-title="OCTET DAQ001 八通道 IEPE 采集器 · 设计与调试实录" hidden></span>
 
 <div class="bi-lang-en" markdown="1">
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
+
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · 7 parts · Part 1 published 2026-10-01</p>
+</div>
 
 Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit vibration DAQ. Each one follows the same shape: the symptom that stopped us, the analysis that found the real cause, and the fix that held.
 
@@ -26,6 +31,11 @@ Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit
 <div class="bi-lang-zh" markdown="1">
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
+
+<div class="bi-series">
+  <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
+  <p class="bi-series-nav">设计与调试实录 · 共 7 篇 · 首篇发布于 2026-10-01</p>
+</div>
 
 **OCTET**（内部型号 DAQ001）是一台 8 通道 IEPE 24bit 工业振动数据采集器。这个系列共 7 篇，每篇都按同一个套路写：**出了什么现象 → 怎么分析 → 根因在哪 → 怎么修好 → 能带走什么**。
 

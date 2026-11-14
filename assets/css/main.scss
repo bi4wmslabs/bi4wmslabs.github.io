@@ -73,6 +73,21 @@ body { background: var(--bi-paper); }
 .bi-post-row h2, .bi-post-row h3 { margin: 0 0 .4rem; font-size: 1.2rem; }
 .bi-post-row h2 a, .bi-post-row h3 a { text-decoration: none; }
 .bi-post-row p { color: var(--bi-muted); margin: 0; font-size: .9rem; }
+
+/* OCTET 系列标识：正文顶部的系列主标题 + Notes 列表里的系列标签 */
+.bi-series {
+  margin: 0 0 2rem;
+  padding: .85rem 1.1rem .95rem;
+  border-left: 3px solid var(--bi-accent);
+  border-radius: 0 .5rem .5rem 0;
+  background: linear-gradient(90deg, rgba(36, 99, 235, .07), rgba(36, 99, 235, 0));
+}
+.page__content .bi-series-name { margin: 0; font-size: .98rem; font-weight: 800; letter-spacing: -.01em; color: var(--bi-ink); }
+.page__content .bi-series-nav { margin: .3rem 0 0; font-size: .78rem; line-height: 1.5; color: var(--bi-muted); }
+.bi-series-nav a { color: var(--bi-muted); text-decoration: underline; text-underline-offset: 2px; }
+.bi-series-nav a:hover { color: var(--bi-accent); }
+.bi-post-series { margin: 0 0 .3rem; font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--bi-accent); }
+.bi-post-row .bi-post-series { color: var(--bi-accent); }
 .bi-about-strip { margin: 4rem 0 2rem; padding: 2rem; border: 1px solid var(--bi-line); border-radius: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .bi-about-strip h2 { margin: 0; max-width: 40rem; letter-spacing: -.04em; }
 .bi-product-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, .8fr); gap: 2rem; align-items: start; }
