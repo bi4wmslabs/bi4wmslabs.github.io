@@ -1,7 +1,7 @@
 ---
-title: "OCTET DAQ205 — 8-Channel IEPE DAQ"
-title_zh: "OCTET DAQ205 八通道 IEPE 采集器"
-short_name: "OCTET DAQ205"
+title: "OCTET DAQ001 — 8-Channel IEPE DAQ"
+title_zh: "OCTET DAQ001 八通道 IEPE 采集器"
+short_name: "OCTET DAQ001"
 short_name_zh: "OCTET 采集器"
 category: "assembled-hardware"
 category_zh: "成品硬件"
@@ -9,13 +9,13 @@ summary: "Assembled 8-channel IEPE vibration DAQ with 24-bit simultaneous sampli
 summary_zh: "成品 8 通道 IEPE 振动采集器，24bit 同步采样，支持板载录制与以太网流式输出；价格与购买方式待公布。"
 featured: true
 pinned: true
-image: "/assets/images/products/octet-daq205.jpg"
+image: "/assets/images/products/octet-daq001.jpg"
 price: "Price on request"
 price_zh: "询价"
 ---
 
 <!-- 页面大标题的中文（放在正文第一行，不会显示） -->
-<span data-zh-title="OCTET DAQ205 八通道 IEPE 采集器" hidden></span>
+<span data-zh-title="OCTET DAQ001 八通道 IEPE 采集器" hidden></span>
 
 <!-- ↓↓↓ 英文正文 ↓↓↓ 哨兵 span 必须保留在块内第一行 ↓↓↓ -->
 <div class="bi-lang-en" markdown="1">
@@ -24,7 +24,7 @@ price_zh: "询价"
 
 ## Product
 
-An assembled **OCTET (DAQ205)** unit — an 8-channel, 24-bit simultaneous-sampling IEPE vibration data acquisition device for condition monitoring of rotating machinery.
+An assembled **OCTET (DAQ001)** unit — an 8-channel, 24-bit simultaneous-sampling IEPE vibration data acquisition device for condition monitoring of rotating machinery.
 
 - 8 IEPE channels, 4k–256 kSPS per channel, 4 digital inputs with timestamps
 - Soldered SD NAND with FAT32 recording, plus 100M Ethernet TCP streaming
@@ -54,7 +54,7 @@ State the hardware and firmware licenses, the warranty terms and the support cha
 
 ## 产品
 
-**OCTET（DAQ205）** 成品整机 —— 8 通道 24bit 同步采样 IEPE 振动数据采集器，面向旋转设备的状态监测。
+**OCTET（DAQ001）** 成品整机 —— 8 通道 24bit 同步采样 IEPE 振动数据采集器，面向旋转设备的状态监测。
 
 - 8 路 IEPE 输入，单通道 4k–256 kSPS；4 路带时间戳的数字输入
 - 板贴 SD NAND（FAT32 本地录制）+ 百兆以太网 TCP 实时流式输出

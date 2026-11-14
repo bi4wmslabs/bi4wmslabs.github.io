@@ -5,7 +5,7 @@ excerpt: "The official protocol spec: 16-byte frame header, command set, data/ev
 excerpt_zh: "正式协议文档全文：16 字节帧头、命令集、数据/事件/数字量帧、存储文件格式、TFTP 文件通道与 UDP 发现。"
 date: 2026-11-12 17:00:00 +0800
 categories: [octet, documentation]
-tags: [protocol, daq205, binary-protocol, python]
+tags: [protocol, daq001, binary-protocol, python]
 permalink: /posts/octet-07-protocol-spec/
 ---
 
@@ -20,7 +20,7 @@ permalink: /posts/octet-07-protocol-spec/
 > **Version note:** This is the official V1.4 protocol specification released with firmware 1.2.0. The frame layout sketched in the earlier design note (part 5) was a draft; wherever the two differ, this document is authoritative.
 
 **Product name** **OCTET** (Octal-Channel Transducer & Event Telemetry); the reported
-`dev_info.name` is `OCTET`. Internal model DAQ205: the storage directory `/DAQ205/DATA`, the
+`dev_info.name` is `OCTET`. Internal model DAQ001: the storage directory `/DAQ001/DATA`, the
 recording filenames and the protocol magic `"D205BIN"` are unchanged.
 
 **Firmware** 1.2.0 · **Publisher** BI4WMS LABS · 2026-11-12
@@ -138,7 +138,7 @@ Sample data: frame-interleaved, in enabled-channel order, 3 bytes per channel
 
 ```c
 struct {
-    char     name[12];       // "DAQ205"
+    char     name[12];       // "DAQ001"
     u16 fw_major, fw_minor, fw_patch;
     u16 hw_rev, dev_type;
     u8  mac[6];
@@ -212,7 +212,7 @@ struct file_read_rsp_t  { u32 offset; u16 len; u16 eof; u32 total; };
 struct file_del_req_t   { char name[48]; };                   // FILE_DEL
 ```
 
-`name` is relative to `/DAQ205/DATA` and must not contain a path separator.
+`name` is relative to `/DAQ001/DATA` and must not contain a path separator.
 
 ## 5. Event frames (EVT) and digital input frames (DIO)
 
@@ -283,7 +283,7 @@ t, param, body = parse(recv_frame(s))       # body[0:8] = rsp_head, then dev_inf
 
 ## 7. Storage data files (onboard SD NAND)
 
-Directory `/DAQ205/DATA/`, filenames `<timestamp>_<N>CH_<ODR>sps.bin`.
+Directory `/DAQ001/DATA/`, filenames `<timestamp>_<N>CH_<ODR>sps.bin`.
 
 - A 52-byte `rec_header_t` header (`magic = "D205BIN"`, Python unpack format
   `"<8sHBBIIIHH6I"`, containing channel count, mask, nominal ODR, start Unix time, total frame count,
@@ -315,7 +315,7 @@ Converting to WAV only requires writing frames with `nchannels=ch_count, sampwid
 
 The device includes an RFC1350 server for bulk copying recorded files from onboard storage. It supports
 `blksize` option negotiation (up to 1428 bytes, so no IP fragmentation occurs). The transfer directory is
-fixed to `/DAQ205/DATA` and filenames must not contain a path.
+fixed to `/DAQ001/DATA` and filenames must not contain a path.
 
 | Operation | Packet | Description |
 |-----------|--------|-------------|
@@ -346,10 +346,10 @@ validated), and the device immediately replies to the source address with a prot
 ## 11. Reference implementation
 
 A complete, runnable reference implementation (protocol stack, CRC, TFTP client, bin→WAV conversion) is in
-`host/daq205_tool.py`; the GUI host is `host/daq205_gui.py`. Both are good starting points for third-party
+`host/daq001_tool.py`; the GUI host is `host/daq001_gui.py`. Both are good starting points for third-party
 development.
 
-[Download the official Chinese PDF (V1.4)](/assets/docs/octet-daq205-protocol-v1.4-zh.pdf)
+[Download the official Chinese PDF (V1.4)](/assets/docs/octet-daq001-protocol-v1.4-zh.pdf)
 
 </div>
 
@@ -362,7 +362,7 @@ development.
 > **版本说明**：本文为随固件 1.2.0 正式发布的《通信协议与数据格式说明》V1.4 全文。第 5 篇设计笔记中的帧结构为早期草稿，如有出入以本文为准；中文 PDF 见文末。
 
 **产品代号** **OCTET**（Octal-Channel Transducer & Event Telemetry）；设备上报的
-`dev_info.name` 为 `OCTET`。内部型号 DAQ205：存储目录 `/DAQ205/DATA`、录制文件名
+`dev_info.name` 为 `OCTET`。内部型号 DAQ001：存储目录 `/DAQ001/DATA`、录制文件名
 与协议 magic `"D205BIN"` 保持不变。
 
 **对应固件** 1.2.0 · **发布** BI4WMS LABS · 2026-11-12
@@ -478,7 +478,7 @@ struct data_meta_t {        // 20 字节
 
 ```c
 struct {
-    char     name[12];       // "DAQ205"
+    char     name[12];       // "DAQ001"
     u16 fw_major, fw_minor, fw_patch;
     u16 hw_rev, dev_type;
     u8  mac[6];
@@ -552,7 +552,7 @@ struct file_read_rsp_t  { u32 offset; u16 len; u16 eof; u32 total; };
 struct file_del_req_t   { char name[48]; };                   // FILE_DEL
 ```
 
-`name` 相对于目录 `/DAQ205/DATA`，不能带路径分隔。
+`name` 相对于目录 `/DAQ001/DATA`，不能带路径分隔。
 
 ## 5. 事件帧（EVT）与数字输入帧（DIO）
 
@@ -623,7 +623,7 @@ t, param, body = parse(recv_frame(s))       # body[0:8] = rsp_head, 其后 dev_i
 
 ## 7. 存储器数据文件（板载 SD NAND）
 
-目录 `/DAQ205/DATA/`，文件名 `<时间戳>_<N>CH_<ODR>sps.bin`。
+目录 `/DAQ001/DATA/`，文件名 `<时间戳>_<N>CH_<ODR>sps.bin`。
 
 - 文件头 52 字节 `rec_header_t`（`magic = "D205BIN"`，Python 解包格式
   `"<8sHBBIIIHH6I"`，含通道数、掩码、标称 ODR、起始 Unix 时间、总帧数、
@@ -655,7 +655,7 @@ t, param, body = parse(recv_frame(s))       # body[0:8] = rsp_head, 其后 dev_i
 
 设备内置 RFC1350 服务端，用于批量拷贝板载存储上的录制文件；支持
 `blksize` 选项协商（上限 1428 字节，不产生 IP 分片）。传输目录固定为
-`/DAQ205/DATA`，文件名里不能带路径。
+`/DAQ001/DATA`，文件名里不能带路径。
 
 | 操作 | 报文 | 说明 |
 |------|------|------|
@@ -686,9 +686,9 @@ tftp -i 192.168.66.55 PUT d://tmp//cal.bin cal.bin
 ## 11. 参考实现
 
 完整可运行的参考实现（协议栈、CRC、TFTP 客户端、bin→WAV 转换）见
-`host/daq205_tool.py`；GUI 上位机见 `host/daq205_gui.py`，
+`host/daq001_tool.py`；GUI 上位机见 `host/daq001_gui.py`，
 可直接作为第三方二次开发的起点。
 
-[下载中文 PDF 正式版（V1.4）→](/assets/docs/octet-daq205-protocol-v1.4-zh.pdf)
+[下载中文 PDF 正式版（V1.4）→](/assets/docs/octet-daq001-protocol-v1.4-zh.pdf)
 
 </div>

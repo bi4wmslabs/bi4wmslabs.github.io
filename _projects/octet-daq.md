@@ -23,7 +23,7 @@ excerpt_zh: "8 通道 IEPE 振动采集器：24bit 同步采样最高 256 kSPS�
 
 ## Overview
 
-**OCTET** (*Octal-Channel Transducer & Event Telemetry*, internal model **DAQ205**) is a compact data acquisition unit built for condition monitoring of rotating machinery — fans, pumps, motors and spindles. It sits next to the machine, digitises eight IEPE accelerometers simultaneously, and either streams the data to a PC over 100M Ethernet or records it to onboard storage on its own.
+**OCTET** (*Octal-Channel Transducer & Event Telemetry*, internal model **DAQ001**) is a compact data acquisition unit built for condition monitoring of rotating machinery — fans, pumps, motors and spindles. It sits next to the machine, digitises eight IEPE accelerometers simultaneously, and either streams the data to a PC over 100M Ethernet or records it to onboard storage on its own.
 
 The full engineering story, from frozen requirements to product release, is published as the [five-part OCTET series](/octet-series/).
 
@@ -56,7 +56,7 @@ The full engineering story, from frozen requirements to product release, is publ
 3. [Ten Rounds of USB CDC Enumeration Debugging](/posts/octet-03-usb-enumeration/)
 4. [Off-Frame SPI, SD Overruns and the 256 kSPS Battle](/posts/octet-04-debugging-adc-sd/)
 5. [Protocol Design, Host Software and Product Release](/posts/octet-05-protocol-and-product/)
-6. [DAQ205 User Manual, V1.5](/posts/octet-06-user-manual/)
+6. [DAQ001 User Manual, V1.5](/posts/octet-06-user-manual/)
 7. [Communication Protocol and Data Format, V1.4](/posts/octet-07-protocol-spec/)
 
 ## Status
@@ -72,7 +72,7 @@ The design and debugging notes above are published in full. Add the schematic, P
 
 ## 概述
 
-**OCTET**（*Octal-Channel Transducer & Event Telemetry*，内部型号 **DAQ205**）是一台面向旋转设备状态监测的紧凑型数据采集器，适用于风机、水泵、电机与主轴。设备就近安装在机器旁，对 8 路 IEPE 加速度传感器同步采样，既可以通过百兆以太网把数据实时流传到上位机，也可以脱离电脑独立录制到板载存储器。
+**OCTET**（*Octal-Channel Transducer & Event Telemetry*，内部型号 **DAQ001**）是一台面向旋转设备状态监测的紧凑型数据采集器，适用于风机、水泵、电机与主轴。设备就近安装在机器旁，对 8 路 IEPE 加速度传感器同步采样，既可以通过百兆以太网把数据实时流传到上位机，也可以脱离电脑独立录制到板载存储器。
 
 从指标冻结到产品化交付的完整过程，已整理为 [OCTET 设计与调试实录系列](/octet-series/)（共 7 篇）。
 

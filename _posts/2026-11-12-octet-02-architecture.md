@@ -57,7 +57,7 @@ app/
 │               net_stream, net_tftp, net_protocol (frames + CRC32)
 ├── port/       lwIP native FreeRTOS port, USB CDC, drv_log
 └── diag/       live_trace: noinit-RAM black box
-host/            Python host: daq205_tool.py (protocol) + daq205_gui.py (UI)
+host/            Python host: daq001_tool.py (protocol) + daq001_gui.py (UI)
 ```
 
 One rule: **drivers never call services, services never touch registers**. The single sanctioned "layer violation" is the diagnostic command line, which may call driver dump functions — debugging is exactly when you need to break encapsulation.
@@ -163,7 +163,7 @@ app/
 │               net_protocol(帧+CRC32)
 ├── port/       移植层：lwip 原生 FreeRTOS 移植、USB CDC、drv_log
 └── diag/       live_trace：noinit RAM 黑匣子
-host/           上位机：daq205_tool.py(协议栈) + daq205_gui.py(界面)
+host/           上位机：daq001_tool.py(协议栈) + daq001_gui.py(界面)
 ```
 
 分层原则很简单：**drivers 不许调 services，services 不许直接碰寄存器**。唯一的"越层"是诊断命令——CDC 命令行可以直接调驱动层的 dump 函数，因为调试时就要打破封装看真相。

@@ -1,15 +1,15 @@
 ---
-title: "OCTET #6: DAQ205 User Manual, V1.5"
-title_zh: "OCTET 06 · DAQ205 使用说明书 V1.5"
+title: "OCTET #6: DAQ001 User Manual, V1.5"
+title_zh: "OCTET 06 · DAQ001 使用说明书 V1.5"
 excerpt: "The official user manual: connectors and LEDs, quick start, host software pages, recording file formats, fault codes and FAQ."
 excerpt_zh: "正式使用说明书全文：接口与指示灯、快速上手、上位机各功能页、录制文件格式、故障码与常见问题。"
 date: 2026-11-12 16:00:00 +0800
 categories: [octet, documentation]
-tags: [manual, daq205, iepe, host-software]
+tags: [manual, daq001, iepe, host-software]
 permalink: /posts/octet-06-user-manual/
 ---
 
-<span data-zh-title="OCTET 06 · DAQ205 使用说明书 V1.5" hidden></span>
+<span data-zh-title="OCTET 06 · DAQ001 使用说明书 V1.5" hidden></span>
 
 <div class="bi-lang-en" markdown="1">
 
@@ -20,7 +20,7 @@ permalink: /posts/octet-06-user-manual/
 > **Release note:** This is the official V1.5 user manual shipped with firmware 1.2.0 and host software 1.2.0, reproduced here in full. The Chinese PDF is available at the end of this article.
 
 **Product name** **OCTET** (Octal-Channel Transducer & Event Telemetry)
-**Internal model** DAQ205 — the storage directory, recording filenames and protocol magic keep the DAQ205 naming
+**Internal model** DAQ001 — storage directory `/DAQ001/DATA` and recording filenames follow this model number; the protocol magic is unchanged
 **Document version** V1.5 · **Firmware** 1.2.0 · **Host software** 1.2.0
 **Released** 2026-11-12 · **Developed / copyright** BI4WMS LABS
 
@@ -28,7 +28,7 @@ permalink: /posts/octet-06-user-manual/
 
 ## 1. Product overview
 
-The DAQ205 is an **8-channel, 24-bit simultaneous-sampling data acquisition unit** for industrial field use (vibration, acoustic and shock IEPE sensor applications), with **4 digital inputs** for monitoring.
+The DAQ001 is an **8-channel, 24-bit simultaneous-sampling data acquisition unit** for industrial field use (vibration, acoustic and shock IEPE sensor applications), with **4 digital inputs** for monitoring.
 
 Core components:
 
@@ -65,10 +65,10 @@ Key capabilities:
 | Command/data port | TCP 5000 |
 | Discovery port | UDP 5001 (broadcast) |
 | File transfer | TFTP server, UDP 69 |
-| Data storage | Onboard SD NAND chip (PCBA-integrated, not a removable SD card), FAT32, directory `/DAQ205/DATA` |
+| Data storage | Onboard SD NAND chip (PCBA-integrated, not a removable SD card), FAT32, directory `/DAQ001/DATA` |
 | Parameter storage | Internal FLASH, log-structured append, retained across power loss |
 | RTC | PCF8563T, Unix time, UTC internally |
-| Host software | Single-file Windows executable `DAQ205_Host.exe`, no installation |
+| Host software | Single-file Windows executable `DAQ001_Host.exe`, no installation |
 | Debug interface | USB CDC virtual COM port (OTG_FS, PA11/PA12) |
 | Reliability | External watchdog fed at 1 Hz; ring buffers absorb SD/network jitter |
 
@@ -144,7 +144,7 @@ Key capabilities:
 1. **Wiring**: connect IEPE sensors to CH1–CH8 and an Ethernet cable to RJ45.
 2. **Power up**: the PWR LED stays on and STATUS enters its heartbeat; with a working cable the network LED does not blink fast.
 3. **Discover the device**: put the PC on the same LAN as the device (defaults to
-   `192.168.66.55 / 255.255.255.0 / 192.168.66.1`), double-click `DAQ205_Host.exe`
+   `192.168.66.55 / 255.255.255.0 / 192.168.66.1`), double-click `DAQ001_Host.exe`
    and press **Discover**; alternatively type `192.168.66.55` into the IP field and press **Connect**.
 4. **Connected**: the device information appears on the left, the network LED stays on and the status bar reads "Connected".
 5. **Start acquisition**: on the **Acquisition** page set channels / sample rate / save-to-storage / streaming,
@@ -159,8 +159,8 @@ Key capabilities:
 
 ### 5.1 Running it
 
-No installation is needed: double-click `DAQ205_Host.exe` in the project root (or run
-`python host/daq205_gui.py` from source — Python 3.9+ with tkinter is required, and the
+No installation is needed: double-click `DAQ001_Host.exe` in the project root (or run
+`python host/daq001_gui.py` from source — Python 3.9+ with tkinter is required, and the
 debug terminal page additionally needs `pip install pyserial`).
 The **EN / 中文** button in the top-right switches the entire interface, including device information.
 
@@ -188,7 +188,7 @@ Parameters are saved to the MCU internal FLASH and survive power loss.
 
 ### 5.4 Files
 
-- Lists every file under `/DAQ205/DATA` (refreshed automatically after connecting)
+- Lists every file under `/DAQ001/DATA` (refreshed automatically after connecting)
 - **Copy to PC / Copy all**: TFTP by default (fast), switchable to the TCP command channel;
   tick "convert to WAV after copy" to turn `.bin` into `.wav`
 - **Upload to storage**: over TFTP
@@ -212,24 +212,24 @@ Parameters are saved to the MCU internal FLASH and survive power loss.
 ### 5.7 Command-line tool (scripts / automation)
 
 ```bash
-python host/daq205_tool.py discover                      # broadcast discovery
-python host/daq205_tool.py info    --ip 192.168.66.55    # device info
-python host/daq205_tool.py status  --ip 192.168.66.55    # running status
-python host/daq205_tool.py set-acq --ip 192.168.66.55 --mask 0xFF --odr-index 3 --duration-ms 5000
-python host/daq205_tool.py set-net --ip 192.168.66.55 --new-ip 192.168.66.60
-python host/daq205_tool.py record  --ip 192.168.66.55 -o a.wav --duration 5
-python host/daq205_tool.py preview --ip 192.168.66.55 --channels 0 1 2
-python host/daq205_tool.py list    --ip 192.168.66.55
-python host/daq205_tool.py tftp-get --ip 192.168.66.55 --name xxx.bin -o xxx.bin
-python host/daq205_tool.py tftp-put --ip 192.168.66.55 --file local.bin
-python host/daq205_tool.py wav      --file xxx.bin -o xxx.wav
+python host/daq001_tool.py discover                      # broadcast discovery
+python host/daq001_tool.py info    --ip 192.168.66.55    # device info
+python host/daq001_tool.py status  --ip 192.168.66.55    # running status
+python host/daq001_tool.py set-acq --ip 192.168.66.55 --mask 0xFF --odr-index 3 --duration-ms 5000
+python host/daq001_tool.py set-net --ip 192.168.66.55 --new-ip 192.168.66.60
+python host/daq001_tool.py record  --ip 192.168.66.55 -o a.wav --duration 5
+python host/daq001_tool.py preview --ip 192.168.66.55 --channels 0 1 2
+python host/daq001_tool.py list    --ip 192.168.66.55
+python host/daq001_tool.py tftp-get --ip 192.168.66.55 --name xxx.bin -o xxx.bin
+python host/daq001_tool.py tftp-put --ip 192.168.66.55 --file local.bin
+python host/daq001_tool.py wav      --file xxx.bin -o xxx.wav
 ```
 
 ---
 
 ## 6. Data file format
 
-Onboard storage directory `/DAQ205/DATA/`, filenames `<timestamp>_<N>CH_<ODR>sps.bin`.
+Onboard storage directory `/DAQ001/DATA/`, filenames `<timestamp>_<N>CH_<ODR>sps.bin`.
 
 - **.bin**: a 52-byte header (`rec_header_t`, magic `"D205BIN"`, containing channel count,
   channel mask, nominal sample rate, start Unix time, total frame count and more) followed by
@@ -342,7 +342,7 @@ Free storage is below 10 MB — copy the data off and clean up promptly.
 4. The event log lives in RAM (256 entries) and is **not retained across power loss**; read it in the host if you need to keep it.
 5. A 100M full-duplex network is recommended; 10M half-duplex may drop blocks at high sample rates.
 
-[Download the official Chinese PDF (V1.5)](/assets/docs/octet-daq205-user-manual-v1.5-zh.pdf)
+[Download the official Chinese PDF (V1.5)](/assets/docs/octet-daq001-user-manual-v1.5-zh.pdf)
 
 </div>
 
@@ -355,7 +355,7 @@ Free storage is below 10 MB — copy the data off and clean up promptly.
 > **版本说明**：本文为随固件 / 上位机 1.2.0 正式发布的《使用说明书》V1.5 全文，中文 PDF 见文末。原文提到的 `docs/protocol.md` 已作为本系列第 7 篇发布。
 
 **产品代号** **OCTET**（Octal-Channel Transducer & Event Telemetry，八通道传感与事件遥测）
-**内部型号** DAQ205（存储目录、录制文件名沿用 DAQ205 命名，协议 magic 不变）
+**内部型号** DAQ001（存储目录 `/DAQ001/DATA`、录制文件名均按 DAQ001 命名，协议 magic 不变）
 **文档版本** V1.5 · 对应固件 **1.2.0** · 对应上位机 **1.2.0**
 **发布日期** 2026-11-12 · **开发 / 版权** BI4WMS LABS
 
@@ -363,7 +363,7 @@ Free storage is below 10 MB — copy the data off and clean up promptly.
 
 ## 1. 产品简介
 
-DAQ205 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器应用）的
+DAQ001 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器应用）的
 **8 通道 24bit 同步数据采集器**，并集成 **4 路数字量输入**监视。
 
 核心组成：
@@ -401,10 +401,10 @@ DAQ205 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器�
 | 命令/数据端口 | TCP 5000 |
 | 发现端口 | UDP 5001（广播） |
 | 文件传输 | TFTP 服务端，UDP 69 |
-| 数据存储 | 板载 SD NAND 存储芯片（PCBA 集成，非可插拔 SD 卡），FAT32，目录 `/DAQ205/DATA` |
+| 数据存储 | 板载 SD NAND 存储芯片（PCBA 集成，非可插拔 SD 卡），FAT32，目录 `/DAQ001/DATA` |
 | 参数存储 | 内部 FLASH 日志式追加，掉电保持 |
 | RTC | PCF8563T，Unix 时间，UTC 内部时制 |
-| 上位机 | Windows 免安装单文件 `DAQ205_Host.exe` |
+| 上位机 | Windows 免安装单文件 `DAQ001_Host.exe` |
 | 调试接口 | USB CDC 虚拟串口（OTG_FS，PA11/PA12） |
 | 可靠性 | 外部看门狗 1Hz 喂狗；环形缓冲吸收 SD/网络抖动 |
 
@@ -480,7 +480,7 @@ DAQ205 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器�
 1. **接线**：IEPE 传感器接入 CH1–CH8；网线接入 RJ45。
 2. **上电**：PWR 电源灯常亮，STATUS 灯进入心跳；网线正常时网络指示灯不会快闪。
 3. **发现设备**：电脑与设备接同一局域网（设备默认
-   `192.168.66.55 / 255.255.255.0 / 192.168.66.1`），双击 `DAQ205_Host.exe`，
+   `192.168.66.55 / 255.255.255.0 / 192.168.66.1`），双击 `DAQ001_Host.exe`，
    点 **发现设备**；也可直接在 IP 框输入 `192.168.66.55` 点 **连接**。
 4. **连接成功**：左侧显示设备信息，网络指示灯常亮，状态栏变为“已连接”。
 5. **启动采集**：在“采集与录制”页设置通道 / 采样率 / 存卡 / 推流，
@@ -495,7 +495,7 @@ DAQ205 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器�
 
 ### 5.1 运行
 
-免安装，双击工程根目录 `DAQ205_Host.exe`（也可用 `python host/daq205_gui.py`
+免安装，双击工程根目录 `DAQ001_Host.exe`（也可用 `python host/daq001_gui.py`
 运行源码，需 Python 3.9+ 带 tkinter，调试终端页另需 `pip install pyserial`）。
 右上角 **EN / 中文** 按钮可一键切换全部界面语言（含设备信息内容）。
 
@@ -523,7 +523,7 @@ DAQ205 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器�
 
 ### 5.4 文件管理（Files）
 
-- 列出板载存储 `/DAQ205/DATA` 下所有文件（连接后自动刷新）
+- 列出板载存储 `/DAQ001/DATA` 下所有文件（连接后自动刷新）
 - **拷贝到电脑 / 全部拷贝**：默认走 TFTP（快），可切 TCP 命令通道；
   勾选“拷贝后自动转成 WAV”可把 `.bin` 直接转为 `.wav`
 - **上传到存储**：走 TFTP
@@ -547,24 +547,24 @@ DAQ205 是一台面向工业现场（振动 / 声学 / 冲击等 IEPE 传感器�
 ### 5.7 命令行工具（脚本 / 自动化）
 
 ```bash
-python host/daq205_tool.py discover                      # 广播发现
-python host/daq205_tool.py info    --ip 192.168.66.55    # 设备信息
-python host/daq205_tool.py status  --ip 192.168.66.55    # 运行状态
-python host/daq205_tool.py set-acq --ip 192.168.66.55 --mask 0xFF --odr-index 3 --duration-ms 5000
-python host/daq205_tool.py set-net --ip 192.168.66.55 --new-ip 192.168.66.60
-python host/daq205_tool.py record  --ip 192.168.66.55 -o a.wav --duration 5
-python host/daq205_tool.py preview --ip 192.168.66.55 --channels 0 1 2
-python host/daq205_tool.py list    --ip 192.168.66.55
-python host/daq205_tool.py tftp-get --ip 192.168.66.55 --name xxx.bin -o xxx.bin
-python host/daq205_tool.py tftp-put --ip 192.168.66.55 --file local.bin
-python host/daq205_tool.py wav      --file xxx.bin -o xxx.wav
+python host/daq001_tool.py discover                      # 广播发现
+python host/daq001_tool.py info    --ip 192.168.66.55    # 设备信息
+python host/daq001_tool.py status  --ip 192.168.66.55    # 运行状态
+python host/daq001_tool.py set-acq --ip 192.168.66.55 --mask 0xFF --odr-index 3 --duration-ms 5000
+python host/daq001_tool.py set-net --ip 192.168.66.55 --new-ip 192.168.66.60
+python host/daq001_tool.py record  --ip 192.168.66.55 -o a.wav --duration 5
+python host/daq001_tool.py preview --ip 192.168.66.55 --channels 0 1 2
+python host/daq001_tool.py list    --ip 192.168.66.55
+python host/daq001_tool.py tftp-get --ip 192.168.66.55 --name xxx.bin -o xxx.bin
+python host/daq001_tool.py tftp-put --ip 192.168.66.55 --file local.bin
+python host/daq001_tool.py wav      --file xxx.bin -o xxx.wav
 ```
 
 ---
 
 ## 6. 数据文件格式
 
-板载存储目录 `/DAQ205/DATA/`，文件名 `<时间戳>_<N>CH_<ODR>sps.bin`。
+板载存储目录 `/DAQ001/DATA/`，文件名 `<时间戳>_<N>CH_<ODR>sps.bin`。
 
 - **.bin**：52 字节文件头（`rec_header_t`，magic `"D205BIN"`，含通道数、
   通道掩码、标称采样率、起始 Unix 时间、总帧数等）+ 帧交错 24bit 小端采样。
@@ -676,6 +676,6 @@ RTC 未校时。连接后点“校时”再录制。
 4. 事件日志保存在 RAM 中（256 条），**断电不保存**；如需保留请在上位机读取。
 5. 建议使用 100M 全双工网络；10M 半双工高采样率下可能丢块。
 
-[下载中文 PDF 正式版（V1.5）→](/assets/docs/octet-daq205-user-manual-v1.5-zh.pdf)
+[下载中文 PDF 正式版（V1.5）→](/assets/docs/octet-daq001-user-manual-v1.5-zh.pdf)
 
 </div>

@@ -21,7 +21,7 @@ permalink: /posts/octet-01-requirements/
 
 Condition monitoring of rotating machinery (fans, pumps, motors, spindles) always starts with **vibration data acquisition**, and IEPE accelerometers are the standard transducers. Off-the-shelf options sit at two extremes: benchtop DAQ cards are expensive and PC-bound; cheap loggers lack resolution, sync and networking.
 
-We built something in between: a compact device that sits next to the machine, streams 24-bit vibration data to a PC over Ethernet in real time, and can also record to onboard storage on its own. Its codename is **OCTET** — *Octal-Channel Transducer & Event Telemetry* (a musical pun: 8 analog channels plus digital telemetry). Internal model number: DAQ205.
+We built something in between: a compact device that sits next to the machine, streams 24-bit vibration data to a PC over Ethernet in real time, and can also record to onboard storage on its own. Its codename is **OCTET** — *Octal-Channel Transducer & Event Telemetry* (a musical pun: 8 analog channels plus digital telemetry). Internal model number: DAQ001.
 
 ## The frozen requirement list
 
@@ -96,7 +96,7 @@ Half of the bugs we hit later were already anticipated at the requirements stage
 - **台式采集卡**：通道多、指标高，但价格贵、体积大、依赖工控机，不适合分布式部署；
 - **简易记录仪**：便宜，但采样率、位深、同步性不够，往往还不能联网。
 
-我们要做的是介于两者之间的东西——一台**可以挂在设备旁边、通过网络把 24bit 振动数据实时推给电脑，也能脱机自己录到板载存储里**的嵌入式采集器。它的代号叫 **OCTET**（Octal-Channel Transducer & Event Telemetry，"八重奏"式的谐音双关：8 通道模拟 + 数字遥测），内部型号 DAQ205。
+我们要做的是介于两者之间的东西——一台**可以挂在设备旁边、通过网络把 24bit 振动数据实时推给电脑，也能脱机自己录到板载存储里**的嵌入式采集器。它的代号叫 **OCTET**（Octal-Channel Transducer & Event Telemetry，"八重奏"式的谐音双关：8 通道模拟 + 数字遥测），内部型号 DAQ001。
 
 ## 二、需求清单
 
