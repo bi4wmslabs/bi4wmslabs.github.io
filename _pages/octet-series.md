@@ -11,15 +11,15 @@ layout: single
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-The complete story of **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit industrial vibration DAQ — from requirements to release, in seven parts — the last two are the formal release documents.
+Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit vibration DAQ. Each one follows the same shape: the symptom that stopped us, the analysis that found the real cause, and the fix that held.
 
-1. **[Requirements and System Design](/posts/octet-01-requirements/)** — freezing specs, part selection, three decisions that saved us later. · 2026-10-01
-2. **[Functional Decomposition and Software Architecture](/posts/octet-02-architecture/)** — data/control-flow split, tasks, ring buffers, the firmware black box. · 2026-10-08
-3. **[Ten Rounds of USB CDC Enumeration Debugging](/posts/octet-03-usb-enumeration/)** — a missing PLL output-enable bit, EP0 skipped, cold-plug PHY power, a leaking BASEPRI. · 2026-10-17
-4. **[Off-Frame SPI, SD Overruns and the 256 kSPS Battle](/posts/octet-04-debugging-adc-sd/)** — off-frame SPI, a 1-DCLK offset, IDMA, an 8 KB stack overflow, and a frame-hungry host. · 2026-10-26
-5. **[Protocol Design, Host Software and Product Release](/posts/octet-05-protocol-and-product/)** — a binary protocol for third parties, reader-thread architecture, and the productization checklist. · 2026-11-02
-6. **[DAQ001 User Manual (V1.5)](/posts/octet-06-user-manual/)** — connectors, indicators, host software, recording file formats, fault codes and FAQ. · 2026-11-09
-7. **[Communication Protocol and Data Format (V1.4)](/posts/octet-07-protocol-spec/)** — frame layout, command set, data/event frames, file transfer and UDP discovery for third-party clients. · 2026-11-14
+1. **[Why We Passed on a Faster SAR ADC](/posts/octet-01-requirements/)** — simultaneous sampling, anti-alias filtering and diagnostics killed the obvious choice. · 2026-10-01
+2. **[256 kSPS Kept Dropping Blocks](/posts/octet-02-architecture/)** — the fault code was real, but the bug was a 12-millisecond buffer budget. · 2026-10-08
+3. **[Every Init Returned OK, the Device Never Appeared](/posts/octet-03-usb-enumeration/)** — ten rounds of USB debugging, three actual bugs. · 2026-10-17
+4. **[Channel Chaos and a Stuck LSB](/posts/octet-04-debugging-adc-sd/)** — three AD7768 off-frame traps, all boundary errors. · 2026-10-26
+5. **[6.2 MB/s and a UI That Stuttered](/posts/octet-05-protocol-and-product/)** — full rebuilds, per-sample decoding, unconditional repaints. · 2026-11-02
+6. **[Twelve LEDs, Three Rewrites](/posts/octet-06-user-manual/)** — the indicator language is product semantics, not debug output. · 2026-11-09
+7. **[Four Fields Deleted Before Freezing the Header](/posts/octet-07-protocol-spec/)** — one byte of misalignment, two days of integration. · 2026-11-14
 
 </div>
 
@@ -27,14 +27,14 @@ The complete story of **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bi
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-**OCTET**（内部型号 DAQ001）是一台 8 通道 IEPE 24bit 工业振动数据采集器。这个系列记录它从需求到发布的完整过程，共 7 篇，其中第 6、7 篇为正式交付文档。
+**OCTET**（内部型号 DAQ001）是一台 8 通道 IEPE 24bit 工业振动数据采集器。这个系列共 7 篇，每篇都按同一个套路写：**出了什么现象 → 怎么分析 → 根因在哪 → 怎么修好 → 能带走什么**。
 
-1. **[需求分析与总体方案](/posts/octet-01-requirements/)** —— 指标冻结、器件选型、三个在后期救了我们的需求决策。 · 2026-10-01
-2. **[功能分解与软件架构](/posts/octet-02-architecture/)** —— 数据流/控制流拆解、任务划分、环形缓冲与固件黑匣子。 · 2026-10-08
-3. **[USB 虚拟串口的十轮攻防](/posts/octet-03-usb-enumeration/)** —— PLL 输出使能位缺失、EP0 被跳过、冷插拔 PHY 供电与 BASEPRI 泄漏。 · 2026-10-17
-4. **[离帧协议、RX_OVERRUN 与 256 kSPS 攻坚](/posts/octet-04-debugging-adc-sd/)** —— 离帧 SPI、1 个 DCLK 偏移、IDMA、8KB 栈溢出与吃帧的上位机。 · 2026-10-26
-5. **[通信协议、上位机与产品化交付](/posts/octet-05-protocol-and-product/)** —— 为第三方集成而设计的协议、专用读线程架构与产品化收尾清单。 · 2026-11-02
-6. **[DAQ001 使用说明书 V1.5](/posts/octet-06-user-manual/)** —— 接口与指示灯、上位机各功能页、录制文件格式、故障码与常见问题。 · 2026-11-09
-7. **[通信协议与数据格式说明 V1.4](/posts/octet-07-protocol-spec/)** —— 帧结构、命令集、数据/事件帧、文件通道与 UDP 发现，面向第三方开发。 · 2026-11-14
+1. **[8 通道 24bit 同步采样，为什么放弃了更快的 SAR 型 ADC](/posts/octet-01-requirements/)** —— 同步性、抗混叠、可诊断三条约束，把最直觉的选项否掉了。 · 2026-10-01
+2. **[256kSPS 一开就丢块，问题不在采样率，在缓冲深度](/posts/octet-02-architecture/)** —— 一个 12 毫秒的余量，撑不住真实的调度抖动。 · 2026-10-08
+3. **[所有初始化都返回 OK，USB 设备却永远不出现](/posts/octet-03-usb-enumeration/)** —— 十轮排查，三个真凶，外加两个各花半天的"小"bug。 · 2026-10-17
+4. **[数据全乱、最低位恒为 0：AD7768 离帧 SPI 踩过的三个坑](/posts/octet-04-debugging-adc-sd/)** —— 三次故障，同一个病根：边界没对齐。 · 2026-10-26
+5. **[6.2MB/s 的数据流，上位机为什么卡成幻灯片](/posts/octet-05-protocol-and-product/)** —— 数据一个不少，卡在全量重绘和逐样本解码上。 · 2026-11-02
+6. **[12 颗指示灯，灯语被推翻了三次](/posts/octet-06-user-manual/)** —— 灯不是调试输出，是产品语义。 · 2026-11-09
+7. **[16 字节帧头定稿前，我们删掉了 4 个字段](/posts/octet-07-protocol-spec/)** —— 一字节错位停了两天联调，删字段反而更好用。 · 2026-11-14
 
 </div>

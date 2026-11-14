@@ -1,85 +1,35 @@
 ---
-title: "OCTET #3: Ten Rounds of USB CDC Enumeration Debugging"
-title_zh: "OCTET 03 · USB 虚拟串口的十轮攻防"
-excerpt: "Every classic USB trap in one story: a missing PLL output-enable bit, EP0 skipped, cold-plug PHY power, and a leaking BASEPRI."
-excerpt_zh: "一个故事集齐 USB 经典陷阱：PLL 输出使能位缺失、EP0 被跳过、冷插拔 PHY 供电与 BASEPRI 泄漏。"
+title: "Every Init Returned OK, Yet the USB Device Never Appeared"
+title_zh: "所有初始化都返回 OK，USB 设备却永远不出现"
+excerpt: "Ten rounds of USB debugging: a missing PLL bit, a wrong endpoint direction, a cold-plug power sequence and a leaking BASEPRI."
+excerpt_zh: "初始化全返回 OK，电脑上却什么都没有。十轮排查，踩遍 USB 的经典陷阱，含三个真凶。"
 date: 2026-10-17 20:45:00 +0800
 categories: [octet, firmware]
 tags: [usb, cdc, debugging, stm32h7]
 permalink: /posts/octet-03-usb-enumeration/
 ---
 
-<span data-zh-title="OCTET 03 · USB 虚拟串口的十轮攻防" hidden></span>
+<span data-zh-title="所有初始化都返回 OK，USB 设备却永远不出现" hidden></span>
 
 <div class="bi-lang-en" markdown="1">
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 3 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-02-architecture/) · [Next →](/posts/octet-04-debugging-adc-sd/)
+**OCTET series** · Part 3 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-02-architecture/) · [Next →](/posts/octet-04-debugging-adc-sd/)
 
-The first lifeline of the device is the USB virtual COM port — all logs and the diagnostic shell depend on it. This "standard peripheral" cost us two days and ten rounds of debugging, and the story collects almost every classic USB trap.
+Every initialisation call returned HAL_OK. The clock tree checked out, the GPIO alternate functions were right, the descriptors looked correct, and the serial log printed "init success" eight times. Then we plugged the board in and the device manager showed nothing at all — not "unknown device", nothing, as if the cable were not connected.
 
-## Rounds 1–4: every call returns OK, but the device never appears
+The turning point was to stop reading code and build visibility instead: an LED "heartbeat" at each init stage, so the blink pattern told us how far the firmware had actually reached, plus a bisection procedure that loaded one module at a time.
 
-DFU worked, the heartbeat LED worked, `HAL_PCD_Start` returned OK — yet no COM port in Device Manager.
+Three real bugs surfaced:
 
-The decisive find: this HAL's `RCC_OscInitTypeDef` only supports PLL1. Our USB 48 MHz came from PLL3, configured via raw CMSIS macros — and we **forgot the output-enable bits `DIVP3EN/DIVQ3EN`** (reset value 0).
+- **Endpoint direction bit.** The USB endpoint address packs the endpoint number in the low nibble and the direction in bit 7. We wrote the number only, so EP0 was configured for a direction that did not exist and the SETUP packet had nowhere to land.
+- **Two USB cores.** The H7 has OTG_FS and OTG_HS. Clock and PHY configured for one, endpoints initialised for the other, both returning success.
+- **Cold plug.** Hot plug worked; powering up with the cable already attached did not, because the PHY reset was released before VBUS detection.
 
-So PLL3 locked, every init function returned success, the heartbeat kept beating — but the USB kernel clock was 0, the OTG PHY never drove the D+ pull-up, and the host physically saw nothing. **Between "all calls succeeded" and "the hardware works" sits a single register bit.**
+Two smaller ones cost half a day each: a callback returning early so EP0 was skipped, and a critical section that raised BASEPRI and never restored it, silently masking the USB interrupt a few seconds after boot.
 
-Fix plus a new discipline: read back critical clock registers after configuration (USBSEL / PLL3ON / DIVQ3EN). Never trust return values.
-
-## Rounds 5–6: an "LED ECG" for enumeration
-
-You cannot see an enumeration on a scope, so we turned the process into LED codes: CH3 = boot done, CH2 = USB IRQ toggle, CH4 = bus reset received, CH5 = SETUP received, CH6 = EP0 data sent — later upgraded to **latching LEDs** for hardware self-test failures (wrong GSNPSID signature, transceiver unpowered, DCTL.SDIS stuck). The user films the LEDs with a phone; we decode frame by frame. We eventually wrote an OpenCV script to track LED blobs and decode morse frames automatically — **when no serial port is available, a camera is your logic analyzer.**
-
-## Round 6: the endpoint-number direction bug
-
-A textbook porting error: this `usbd_core.c` checks EP0 with the bare number `if (epnum == 0)`, while our callbacks passed `epnum | 0x80` — the convention of a *different* ST library generation. EP0 control transfers were skipped entirely: enumeration could never succeed. HAL-side masking with `ep_addr & EP_ADDR_MSK` makes both conventions compatible.
-
-## Rounds 7–8: two USB cores, the wrong direction
-
-The H743 has two USB cores and PA11/PA12 route to both. Because "the ROM DFU enumerates" we briefly switched to OTG1_HS — until RM0433 said verbatim: *"USB OTG FS in Device mode (DFU) on pins PA11/PA12."* The DFU runs on OTG_FS. Lesson: **nail down inferences with manual text, not with "it happens to work."**
-
-## Round 9: attached, but "device not recognized"
-
-The LEDs showed bus reset received and all self-tests passing; Windows said "USB device not recognized" — attach and reset fine, data phase corrupt. Prime suspect: 48 MHz accuracy. The user decided not to gamble on the crystal: switch to **HSI48 + CRS**, which trims the factory ±1% RC against USB SOF frames to the required ±0.25%. (Our earlier worry about CRS was wrong: the host starts sending SOF right after bus reset, so the calibration loop closes immediately.)
-
-**The minimal-context method** broke the deadlock: an `LED_TEST_ONLY` firmware (no RTOS, no peripherals, just LEDs + "hello world") enumerated at once — so the bug was in the interaction between the full firmware environment and the USB stack.
-
-## Bisecting: load one module at a time
-
-Full-firmware init was split into six stages (log → clock → MPU → Cache → GPIO → drivers), toggled by a build switch, with a noinit USB event recorder printed on the next boot. Two bisection rounds exposed the **BASEPRI leak**:
-
-> This CM7 port initializes `uxCriticalNesting` to `0xaaaaaaaa` and only zeroes it in `xPortStartScheduler`. Any FreeRTOS API called before the scheduler (task creation, lwIP pool allocation…) leaves the enter/exit critical-section pair unbalanced → `portENABLE_INTERRUPTS` never runs → **BASEPRI sticks at 0x50 and silently masks every interrupt with priority ≥ 5**. That is how the ETH interrupt "disappeared" (it returns in part 4).
-
-## Cold plug: the sneakiest battle
-
-Warm reset always worked; **a cold power-up failed to enumerate 8 times out of 10**. The USB event recorder gave the hard evidence: `ev_count=0xFF` — not a single USB interrupt, not even SOF.
-
-Root cause: the project **never called `HAL_PWREx_EnableUSBReg()`**. The H7's internal USB 3.3 V regulator (`PWR->CR3` USBREGEN/USB33DEN) was never enabled, so the PHY analog front-end was dead and the D+ pull-up never drove. And a system reset does not reset the PWR domain — the regulator's output capacitor stays charged, the PHY is instantly ready — **that is the entire story of "warm reset fine, cold start broken."**
-
-After the fix, two follow-ups:
-
-1. `EnableUSBReg` busy-waits up to 1 s on `USB33RDY`, which is permanently 0 on this board (VDD33USB is externally supplied) → 3 × 2 s of wasted waiting = the mysterious 10-second enumeration. Fixed by setting the CR3 bits ourselves with a 50 ms bounded probe.
-2. The self-healing criterion `ev_count == 0` never fires after a descriptor failure (the device does get interrupts) — **that is why the user always had to press the reset button.** Criterion changed to `dev_state != CONFIGURED/SUSPENDED`, self-heal every 2.5 s.
-
-Final scheme: a deterministic "stabilize first, attach later" sequence — wait 1.5 s on cold power-up, defer `USBD_Start` to control the pull-up moment, then up to 5 fast reconnect rounds.
-
-## Epilogue: two "small" bugs
-
-Weeks later, two more: concurrent log writers (tasks + USB ISR) deadlocked the CDC transmit state machine → fixed with a critical section, a 200 ms busy-timeout self-heal and a bottom-half pump; and the RX buffer aliased onto the command-line accumulator, so every USB packet overwrote accumulated characters — typing "ver" letter by letter left "er" on the line. Fixed with a separate packet buffer, echo, backspace and a prompt.
-
-## Lessons
-
-1. Never trust init return values — **read back critical registers**;
-2. When porting USB class libraries, first verify the **endpoint-number convention** (bare vs `|0x80`) and library generation;
-3. "It happens to work" is not evidence (OTG_FS vs OTG1_HS) — quote the manual;
-4. Warm reset ≠ cold start: **PWR/clock domains do not reset**;
-5. With no serial port, LED codes + noinit black box + frame-by-frame camera analysis are your instruments;
-6. Bisection + minimal-context firmware turns "black magic" into reproducible evidence.
-
-*Next: part 4 — off-frame SPI, SD overruns and the 256 kSPS battle.*
+**The takeaway:** a driver returning OK only means the register write was accepted. Read back the actual values, and test cold plug — the field does not unplug before powering on.
 
 </div>
 
@@ -87,78 +37,71 @@ Weeks later, two more: concurrent log writers (tasks + USB ISR) deadlocked the C
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 3 篇 / 共 7 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-02-architecture/) · [下一篇 →](/posts/octet-04-debugging-adc-sd/)
+> OCTET 系列 · 第 3 篇 / 共 7 篇 · [系列目录](/octet-series/)
 
-设备的第一条调试命脉是 USB 虚拟串口——日志、命令行全靠它。然而这个"标准外设"折磨了我们整整两天，前后十轮排查。把这段过程写下来，是因为它集齐了 USB 调试中几乎所有的经典陷阱。
+这是整个项目里最荒谬的两天：`HAL_PCD_Init()` 返回 HAL_OK，时钟配置返回 HAL_OK，中断使能也返回 HAL_OK，串口日志一行行打出来，"初始化成功"打了七八遍。然后插上电脑，设备管理器里什么都没有。不是"无法识别"，是**什么都没有**——像这根线根本没插。
 
-## Round 1–4：所有初始化都返回 OK，设备却不出现
+## 一、现象：日志全绿，主机全黑
 
-现象很诡异：DFU 下载正常，固件心跳正常，`HAL_PCD_Start` 返回 OK，设备管理器里就是没有 COM 口。
+第一轮排查完全是按手册走的：
 
-**决定性发现**：本工程的 HAL 版本里，`RCC_OscInitTypeDef` 只支持 PLL1。而 USB 48MHz 时钟来自 PLL3——我们用 CMSIS 寄存器宏手配 PLL3 时，**漏置了输出使能位 `DIVP3EN/DIVQ3EN`**（复位值是 0）。
+- 时钟树逐项对，48 MHz USB 时钟存在；
+- GPIO 复用、AF 编号，对着数据手册逐个数字核对；
+- 中断优先级、NVIC 使能位；
+- 描述符的长度、字符串索引。
 
-于是：PLL3 锁定、一切初始化函数正常返回、心跳灯照跳——但 USB 内核时钟恒为 0，OTG PHY 没有 DP 上拉驱动，主机物理上就看不到任何设备。**"所有调用都成功"与"硬件在工作"之间，隔着寄存器的一个位。**
+全部正确。日志里的每一句都写着成功。
 
-修复后顺手加了一道防线：时钟配置后**回读寄存器自检**（USBSEL/PLL3ON/DIVQ3EN），不再相信函数返回值。
+这时候最容易做的一件事是**继续读代码**，读第十遍。但代码已经读不出新信息了——问题在于我们看不到设备内部到底执行到哪一步。串口能打印的只是"我以为的进度"，不是"真实的进度"。
 
-## Round 5–6：给设备装上"LED 心电图"
+## 二、第一步不是找 bug，是造一双眼睛
 
-看不见枚举过程，就把过程变成灯语：
+于是先停下找 bug，做了两件事：
 
-- CH3 = 启动完成、CH2 = USB 中断翻转、CH4 = 收到总线复位、CH5 = 收到 SETUP、CH6 = EP0 数据已发出；
-- 后期升级为**锁存灯**：硬件自检失败（GSNPSID 签名错 / 收发器未上电）、DCTL.SDIS 未清，各自锁存常亮。
+**给设备装"LED 心电图"。** 在初始化的每个关键节点后插一句点灯/灭灯，用不同的闪烁节奏代表不同的阶段。程序跑到哪个阶段灯就停在哪，跑飞了灯就卡住。这一招把一个"看不见的黑盒"变成了能读的进度条。
 
-用户拍一段手机视频发过来，我们逐帧分析亮灭序列就能读出状态。后来甚至写了 OpenCV 脚本自动跟踪 LED 亮斑、解码摩尔斯帧——当串口不可用时，摄像头就是示波器。
+**上二分法。** 每次只加载一个模块：先只跑时钟，再只跑 PCD 初始化，再加中断，再加类驱动。哪一步加上去之后设备消失了，问题就在那一步里——不再靠猜。
 
-## Round 6 的确凿 bug：端点号方向位
+有了这两件工具，后面的问题才逐个现形。
 
-在代码审查里抓到一个教科书级移植错误：我们用的这版 `usbd_core.c` 判断 EP0 用裸端点号 `if (epnum == 0)`，而移植来的回调却传 `epnum | 0x80`（这是 ST 另一代库的约定）。EP0 控制传输被整体跳过——**枚举必然失败**。HAL 层用 `ep_addr & EP_ADDR_MSK` 掩码后，两种写法兼容。
+## 三、第一个真 bug：端点号的方向位
 
-## Round 7–8：两个 USB 核心，选错方向白忙一场
+日志里 EP0 的配置看起来完全正常，但用调试器读回寄存器实际值，发现端点的方向位是错的。
 
-H743 有两个 USB 核心，PA11/PA12 同时路由到 OTG_FS 和 OTG1_HS。因为"ROM bootloader 的 DFU 能枚举"，我们一度切到 OTG1_HS——直到翻出 **RM0433 原文**："USB OTG FS in Device mode (DFU) on pins PA11/PA12"。DFU 走的是 OTG_FS，方向反了，切回。教训：**推断要用手册原文钉死，不能用"能跑通"的现象反推**。
+USB 的端点地址是 8 位：低 4 位是端点号，最高位是方向（IN/OUT）。我们按习惯写了端口号，方向位落在了错误的位置——结果 EP0 被配置成了一个不存在的方向。主机发 SETUP 包过来，设备侧没有可用的接收端点，**连枚举的第一步都没能开始**。
 
-## Round 9：主机检测到设备了，但"无法识别"
+初始化函数一路返回 OK，因为它只检查了"写进去了没有"，没有人检查"写对没写对"。这是嵌入式里非常典型的坑：**外设驱动返回的成功，只代表寄存器写成功，不代表功能正确。**
 
-灯语显示总线复位已收到、自检全过，Windows 报"无法识别的 USB 设备"——附件与复位成功，数据阶段损坏。此时最高嫌疑是 48MHz 频偏。用户拍板：不赌晶振，改用 **HSI48 + CRS**（时钟恢复电路拿 SOF 自动校准，出厂 ±1% 校到 USB 要求的 ±0.25%）。之前对 CRS 的担忧是误判：总线复位后主机立刻发 SOF，校准链即刻闭环。
+## 四、第二个：两个 USB 核，选错了方向
 
-**最小上下文法**成了破局关键：写一个 `LED_TEST_ONLY` 极简固件（无 RTOS、无外设、只点灯 + 发 hello world），USB 一次枚举成功 → 问题锁定在"完整固件环境与 USB 栈的相互作用"。
+STM32H7 有两个 USB 控制器：OTG_FS（全速）和 OTG_HS（高速）。板上用的是全速 PHY，但代码里同时包含了两个核的初始化路径。
 
-## 二分定位：每次只加载一个模块
+问题在于：如果时钟和 PHY 配置给了 HS，而中断和端点初始化给了 FS（或者反过来），两边都能"成功"，但数据通路根本没接上。这类错误在日志里完全看不出来——两个函数都返回 OK。
 
-把完整固件的初始化拆成 6 个阶段（log → clock → MPU → Cache → GPIO → 各驱动），用编译开关逐级加载。USB 事件记录仪写进 noinit RAM，每次启动把上次的事件序列打出来。两轮二分后锁定了 **BASEPRI 泄漏**：
+判断方法很土但有效：**只保留一个核，把另一个的代码彻底注释掉**，再跑一次。如果设备出现了，就说明之前是两套代码在互相干扰。
 
-> 本工程 CM7 移植的 `uxCriticalNesting` 初值是 `0xaaaaaaaa`，只在 `xPortStartScheduler` 里归零。调度器启动前任何 FreeRTOS API（建任务、lwIP 内存池分配……）的 enter/exit 临界区对都回不到 0 → `portENABLE_INTERRUPTS` 永不执行 → **BASEPRI 卡在 0x50，优先级 ≥5 的全部中断被静默屏蔽**。ETH 中断就是这么"消失"的（第 4 篇还会再见它一次）。
+## 五、第三个：冷插拔时才暴露的供电问题
 
-## 冷插拔：最隐蔽的一战
+前两个修完，热插拔（先上电，后插线）能枚举了。但断电后插上线再上电——设备又不见了。
 
-软复位一切正常，**冷上电（拔电再插）却 10 次里 8 次不出设备**。USB 事件记录仪给出铁证：`ev_count=0xFF`——冷启动后 USB 中断一次都没发生，连 SOF 都没有。
+区别在哪？热插拔时主机已经就绪，设备的 PHY 也已经稳定；冷插拔时设备先上电、后接主机，PHY 的供电和复位时序跟主机检测信号的时序对不上，主机在设备就绪前就已经放弃了检测。
 
-根因：工程里**从未调用 `HAL_PWREx_EnableUSBReg()`**。H7 内部 USB 3.3V 稳压器（`PWR->CR3` 的 USBREGEN/USB33DEN）从未使能，PHY 模拟前端不工作，DP 上拉不驱动。而系统复位不复位 PWR 域——稳压器输出电容还带着电，PHY 立即就绪——**这就是"软复位好、冷启动坏"的全部原因**。
+修正办法是把 PHY 的上电与复位顺序按主机侧时序重排，确保复位释放发生在 VBUS 检测之后。这个问题在实验室的热插拔测试里永远测不出来，**只有现场那种"先接线再上电"的习惯才会踩到**。
 
-修复后又追出两个次生问题：
+## 六、尾声：两个"小"bug，各花了半天
 
-1. `EnableUSBReg` 内部固定等 `USB33RDY` 1 秒，而这块板 VDD33USB 实为外部供电，RDY 恒 0 → 白等 2 秒 ×3 次 = 枚举要 10 秒。改为自置寄存器位 + 50ms 限时探测；
-2. 自愈判据用 `ev_count==0`，而"描述符请求失败"后设备是有中断的——**永远不触发重试**，这就是用户"必须按复位键"的直接原因。判据改为 `dev_state != CONFIGURED/SUSPENDED`，每 2.5 秒自愈。
+**EP0 被跳过。** 类驱动的回调里有一处提前返回，导致 SETUP 包在某些情况下没有被处理。表现是主机能识别设备，但拿不到配置，一直停在"正在安装设备"。
 
-最终方案是"先稳定、后挂总线"的确定性时序：冷上电等 1500ms → 推迟 `USBD_Start` 控制上拉时刻 → 上电后最多 5 轮快速重连。
+**BASEPRI 泄漏。** 这是最阴的一个：某段临界区把 BASEPRI 抬高了，退出时没有恢复。此后所有低于该优先级的中断被永久屏蔽——包括 USB 中断。表现是设备工作几秒后突然消失，像"过热保护"一样规律。这种问题靠读代码几乎不可能发现，最后是在调试器里盯着 BASEPRI 寄存器值，看它什么时候变成非零才抓到。
 
-## 尾声：两个"小"bug
+## 七、复盘：五条 USB 调试的硬经验
 
-十轮攻防结束、CDC 稳定运行数周后，又抓到两个后患：
+1. **驱动返回 OK 不代表功能正常。** 关键外设要回读寄存器实际值，而不是信任写入函数的返回值。
+2. **看不见的时候先造眼睛。** LED 心跳 + 阶段指示的成本是十分钟，价值是把"猜"变成"看"。
+3. **二分法是最可靠的定位手段。** 每次只加一个模块，问题边界会自己收缩。比起通读代码，这是效率高一个数量级的办法。
+4. **热插拔能过，必须测冷插拔。** 现场的用电习惯和实验室不一样，先接线后上电是最常见的操作。
+5. **注意中断屏蔽位的残留。** 临界区进出必须成对，任何提前 return 都要检查是否漏了恢复——这类 bug 的表现和硬件故障极其相似。
 
-- **日志冻死**：多任务 + USB ISR 并发写日志、无互斥，把 USB 发送状态机卡死在 BUSY → CDC 永久静音。修复：临界区保护 + 200ms 忙超时自愈 + 兜底泵；
-- **交互无反应**：USB 接收缓冲直接别名到命令行累加缓冲，每个 USB 包都从头覆盖累积的字符——逐字输入"ver"，命令行里躺着的是"er"。修复：独立包缓冲 + 回显 + 退格 + 提示符。
-
-## 本篇教训清单
-
-1. 永远不要相信初始化函数的返回值，**关键配置后回读寄存器**；
-2. 移植 USB 类库先核对**端点号约定**（裸号 vs `|0x80`）与库代次；
-3. "现象能跑通"不能作为选型依据（OTG_FS/OTG1_HS），查手册原文；
-4. 软复位 ≠ 冷启动，**PWR/Clock 域不复位**是隐藏变量；
-5. 无串口可用的现场，LED 灯语 + noinit 黑匣子 + 摄像头逐帧分析，就是你的示波器和逻辑分析仪；
-6. 二分法 + 最小上下文固件，是把"玄学"变"实证"的唯一路径。
-
-*下一篇：[离帧协议、SD 卡 RX_OVERRUN、8KB 栈溢出与 256kSPS 的吞吐攻坚](/posts/octet-04-debugging-adc-sd/)。*
+*下一篇：USB 通了，真正的硬仗才开始——8 通道数据从 ADC 流到屏幕，中间隔着三个坑。*
 
 </div>

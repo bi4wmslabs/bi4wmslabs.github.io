@@ -1,103 +1,35 @@
 ---
-title: "OCTET #5: Protocol Design, Host Software and Product Release"
-title_zh: "OCTET 05 · 通信协议、上位机与产品化交付"
-excerpt: "A binary protocol built for third-party integration, a frame-hungry-proof host architecture, and the productization checklist."
-excerpt_zh: "为第三方集成而设计的二进制协议、防吃帧的上位机架构，以及产品化收尾清单。"
+title: "6.2 MB/s of Data and a Host UI That Stuttered"
+title_zh: "6.2 MB/s 的数据流，上位机为什么卡成幻灯片"
+excerpt: "Not the network: full-canvas rebuilds, per-sample Python decoding and unconditional repaints."
+excerpt_zh: "数据一个不少，画面卡成 PPT。三个瓶颈叠加：全量重绘、逐样本解码、无效刷新。"
 date: 2026-11-02 21:15:00 +0800
 categories: [octet, firmware]
 tags: [protocol, python, gui, product]
 permalink: /posts/octet-05-protocol-and-product/
 ---
 
-<span data-zh-title="OCTET 05 · 通信协议、上位机与产品化交付" hidden></span>
+<span data-zh-title="6.2 MB/s 的数据流，上位机为什么卡成幻灯片" hidden></span>
 
 <div class="bi-lang-en" markdown="1">
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 5 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-04-debugging-adc-sd/) · [Next →](/posts/octet-06-user-manual/)
+**OCTET series** · Part 5 of 7 · [Series index](/octet-series/) · [Prev](/posts/octet-04-debugging-adc-sd/) · [Next →](/posts/octet-06-user-manual/)
 
-## A binary protocol designed for third parties
+The device side was finally correct and the link was stable, but the waveform on screen moved like a stop-motion animation. At eight channels and 256 kSPS it nearly froze, and dragging the window locked the UI for hundreds of milliseconds. A packet capture showed every byte arriving — the problem was not transport.
 
-> **Update:** the released V1.4 specification is published as [part 7](/posts/octet-07-protocol-spec/). The frame layout below is an early design draft.
+Three bottlenecks were stacked on top of each other:
 
-When a device is sold to customers and integrated into their systems, the protocol document is a second product. Three principles only: **fixed header, CRC32 over header+payload, structs that map 1:1 onto the wire**.
+- **Full canvas rebuild per frame.** The original code deleted every item and recreated the curve plus grid each refresh, which means thousands of Tkinter item allocations per frame.
+- **Per-sample decoding in pure Python.** Unpacking 24-bit samples in a loop handled two million iterations per second at full rate.
+- **Unconditional repaints.** A timer repainted regardless of whether new data had arrived — wasteful at low rates, backlogged at high rates.
 
-### Frame format
+The fix was to replace "recompute everything" with "update what changed": compress each millisecond into a (min, max) envelope cell in a 1500-cell rolling window; create the 1500 line items once and move them with `coords()`; decode with numpy in one vectorised call (with a pure-Python fallback for the packaged exe); repaint only when dirty, capped at 30 FPS; and switch the frame CRC to an incremental calculation.
 
-```
-| Off | Field   | Size | Notes                                        |
-|-----|---------|------|----------------------------------------------|
-| 0   | magic   | 2 B  | 0xDA05                                       |
-| 2   | version | 1 B  | protocol version                             |
-| 3   | type    | 1 B  | 0x00 RSP / 0x01 CMD / 0x02 DATA / 0x04 EVT / 0x05 DIO |
-| 4   | status  | 1 B  | RSP: 0 ok / 1 param / 2 busy / 3 state / 4 storage / 7 nomem |
-| 5   | reserve | 1 B  |                                              |
-| 6   | plen    | 2 B  | payload length                               |
-| 8   | seq     | 4 B  | sequence number                              |
-| 12  | crc32   | 4 B  | header+payload (incrementally computed)      |
-| 16  | payload | plen |                                              |
-```
+Measured after the rewrite: 0.089 ms to decode and enqueue one block, 8.6 ms per repaint, a steady 30 FPS at full rate.
 
-Seventeen commands: GET_INFO / SET_NET / SET_TIME / GET_STATUS / SET_ACQ / ACQ_START / ACQ_STOP / FILE_LIST / FILE_READ / FILE_DEL / FACTORY_RESET / REBOOT… all strict request-response, with `seq` and `status` echoed back. A third party can implement a client from the document alone.
-
-### Three side channels
-
-- **UDP 5001 discovery** — broadcast anything, the device answers with dev_info_t (name / IP / version / channels): zero-configuration hosts;
-- **UDP 69 TFTP** — bulk download/upload of recordings, blksize negotiated up to 1428 bytes (no IP fragmentation), busy error while acquiring;
-- **PKT_DIO per block** — 4 DI state bits + accumulated edge counts, emitted with each data block so both share one time axis.
-
-## Three host-software decisions
-
-### 1. A dedicated reader thread
-
-GUI command polling, waveform preview and file transfer share one TCP connection; any "send commands while receiving data" scheme steps on frames. Final shape:
-
-```
-socket ──► reader thread (exclusive recv + frame parser)
-             ├─ DATA → pending_data queue (preview / recording)
-             ├─ RSP  → rsp_queue (command() waits here)
-             └─ EVT  → evt_queue
-```
-
-`command()` only sends; `read_data_frame()` only dequeues. Same public API, zero races.
-
-### 2. Oscilloscope-style rendering
-
-At high rates the enemy is full repaint per packet. Envelope downsampling + 30 FPS dirty-frame repaint + `coords()` in-place updates keep Tkinter smooth at 256 kSPS (part 4; under 35% of one core measured).
-
-### 3. Single-file exe delivery
-
-PyInstaller `--onefile --windowed`, excluding numpy/matplotlib (67 MB → ~12 MB), with a `--selftest` flag for automated verification. **Double-click, zero install** — the passing grade for industrial host software. The UI went through three rounds: deep-blue tech → Apple liquid glass → **Scopy-style dark instrument** (neutral gray panels, steel-teal accent, scope trace colors) — landing on restrained "professional instrument software."
-
-## The productization checklist
-
-| Item | Content |
-|------|---------|
-| Branding | OCTET codename end-to-end: window title, device name, USB enumeration, CDC prompt, documents |
-| Wording | "SD card" → "onboard SD NAND (not removable)"; LED descriptions match hardware exactly |
-| LEDs | STATUS heartbeat / power / CH1–8 acquiring / storage alarm / network status, each defined in the manual |
-| Docs | User manual (V1.5, PDF+MD) + protocol spec (V1.4, PDF+MD) + this blog series |
-| Storage | Parameters in internal FLASH (append-only log); EEPROM and NOR fully removed from BOM and firmware |
-| Version | Firmware and host unified at 1.2.0, verified by `--selftest` |
-
-## Quick start (manual digest)
-
-1. **Wire up**: IEPE sensors to CH1–CH8, Ethernet to RJ45, power on. STATUS heartbeat = ready;
-2. **Discover**: same subnet (default `192.168.66.55`), run the host exe, click Discover;
-3. **Acquire**: pick channels and sample rate → check "stream to network" for live waveforms and the 4-DI ladder; check "save to onboard storage" for standalone recording — download `.bin` files later and convert to `.wav` automatically;
-4. **Time sync**: the Sync button writes PC time into the RTC so recording filenames are correct;
-5. **Maintenance**: TFTP bulk download/delete on the file page; the storage LED blinks under 10 MB free; factory reset returns IP to 192.168.66.55.
-
-## Closing the series
-
-Two months from the first line of firmware to the 1.2.0 release build. The most valuable takeaways are not the individual bug fixes but three methods:
-
-1. **Evidence over assumption** — every "should be" must become "measured is": register read-backs, offline spectra, noinit traces, camera-decoded LED codes;
-2. **Observability is designed, not retrofitted** — live_trace, CDC commands and LED diagnostic bits were in the architecture from the requirements stage;
-3. **Documentation is product** — protocol spec, manual, and selftest ship with the firmware in version control, or third-party integration and after-sales support never happen.
-
-*The five design notes end here. The formal release documents follow in parts 6 and 7.*
+**The takeaway:** decouple screen resolution from sample rate, keep the item count fixed and mutate it, and let data arrival drive repaints rather than a timer.
 
 </div>
 
@@ -105,94 +37,102 @@ Two months from the first line of firmware to the 1.2.0 release build. The most 
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 5 篇 / 共 7 篇 · [系列目录](/octet-series/) · [上一篇](/posts/octet-04-debugging-adc-sd/) · [下一篇 →](/posts/octet-06-user-manual/)
+> OCTET 系列 · 第 5 篇 / 共 7 篇 · [系列目录](/octet-series/)
 
-## 一、二进制协议：为第三方集成而设计
+设备端的数据已经对了，网络也稳定，可屏幕上的波形像卡了帧的动画：走两步停一下，拖动窗口直接冻住。8 通道 256 kSPS 时更夸张，几乎定格。最初以为是网络不够快，抓包一看——数据一个不少，全都到了。**问题不在传输，在画图。**
 
-> **更新**：正式发布的 V1.4 协议文档见[第 7 篇](/posts/octet-07-protocol-spec/)；下文帧结构为早期设计草稿。
+## 一、现象：数据是全的，画面是断的
 
-设备要卖给客户、要被客户的系统集成，协议文档就是第二份产品。设计原则只有三条：**定长帧头、CRC32 全覆盖、结构体对齐即字节序**。
+具体表现：
 
-### 帧结构
+- 低采样率（4k、8k）时基本流畅；
+- 32k 以上开始掉帧，256k 时几乎不刷新；
+- 拖动窗口、切换标签页时明显卡死几百毫秒；
+- 任务管理器里 CPU 单核跑满。
 
-```
-| 偏移 | 字段     | 长度 | 说明                        |
-|------|----------|------|-----------------------------|
-| 0    | magic    | 2B   | 0xDA05                      |
-| 2    | version  | 1B   | 协议版本                    |
-| 3    | type     | 1B   | 0x00 RSP / 0x01 CMD / 0x02 DATA / 0x04 EVT / 0x05 DIO |
-| 4    | status   | 1B   | RSP：0 成功 / 1 参数 / 2 忙 / 3 状态 / 4 存储 / 7 无内存 |
-| 5    | reserve  | 1B   |                             |
-| 6    | plen     | 2B   | 负载长度                    |
-| 8    | seq      | 4B   | 序号                        |
-| 12   | crc32    | 4B   | 帧头+负载（增量 CRC 计算）  |
-| 16   | payload  | plen |                             |
-```
+抓包确认每秒收到的字节数与理论值一致，丢包率为零。所以数据链路没问题。剩下的嫌疑只有两个：解码，和绘制。
 
-命令集 17 条：GET_INFO / SET_NET / SET_TIME / GET_STATUS / SET_ACQ / ACQ_START / ACQ_STOP / FILE_LIST / FILE_READ / FILE_DEL / FACTORY_RESET / REBOOT……全部"一问一答"，RSP 帧原样带回 seq 与 status，第三方照文档即可实现客户端。
+## 二、分析：三个地方在同时拖后腿
 
-### 三条辅助通道
+**第一刀：每帧都在重建画布。**
 
-- **UDP 5001 发现**：向网段广播任意包，设备回 RSP+dev_info_t（名称/IP/版本/通道数）——上位机免配置；
-- **UDP 69 TFTP**：录制文件批量下载/上传，blksize 协商到 1428 字节（不分片），采集中回 busy；
-- **PKT_DIO 随块下发**：4 路 DI 状态位图 + 累计边沿计数，与数据块同拍，时间轴天然对齐。
+原来的绘制逻辑很简单——每次刷新先 `delete("all")`，再重新 `create_line` 画一遍曲线和网格。
 
-完整协议文档（V1.4）随仓库开源，并附 Python 最小客户端示例——拿着 200 行代码就能自己写上位机。
+看起来很直观，代价是：每一帧都要销毁并重建上千个图元对象。Tkinter 的 Canvas 不是 GPU 加速的即时模式渲染，图元创建要走 Tcl 解释器、分配对象、进入显示列表。一帧上千个对象，光这一项就吃掉几十毫秒。
 
-## 二、上位机工程化的三个关键决策
+**第二刀：逐样本解码。**
 
-### 1. 专用读线程架构
+数据是 24 bit 打包的，Python 里原来这么解：
 
-GUI 的命令轮询、波形预览、文件传输共用一条 TCP 连接，任何"边发命令边收数据"的实现都会踩丢帧的坑。最终形态：
-
-```
-socket ──► reader 线程（独占 recv + 逐帧解析）
-             ├─ DATA → pending_data 队列（预览/录制取用）
-             ├─ RSP  → rsp_queue（command 等待）
-             └─ EVT  → evt_queue
+```python
+for i in range(0, len(buf), 3):
+    v = buf[i] | (buf[i+1] << 8) | (buf[i+2] << 16)
+    if v & 0x800000:
+        v -= 1 << 24
+    out.append(v)
 ```
 
-`command()` 只发不收；`read_data_frame()` 只从队列取。接口不变，竞争消失。
+一段 6 KB 的块有 2000 个样本，每秒 1000 块——就是每秒 200 万个 Python 循环。这一项单独就能把单核吃满。
 
-### 2. 示波器式渲染
+**第三刀：无效刷新。**
 
-数据量大时，GUI 渲染的敌人是"每包全量重绘"。包络降采样 + 30FPS 脏帧重绘 + `coords()` 原地更新，让 Tkinter 在 256kSPS 下也能丝滑滚动（第 4 篇已详述，实测单核占用 <35%）。
+定时器按固定间隔触发重绘，不管有没有新数据。低速采集时数据稀疏，画面却在高频重画，纯属浪费；高速时又因为重绘太慢而积压，越积越卡。
 
-### 3. 单文件 exe 交付
+三个问题叠在一起：**每次刷新都在做全量工作，而真正变化的像素只有一点点。**
 
-PyInstaller `--onefile --windowed`，排除 numpy/matplotlib 等拖体积的依赖（67MB→12MB 级），`--selftest` 参数支持自动化验证。现场电脑**双击即用、零安装**，这是工业软件的及格线。
+## 三、解决：把"全量重画"改成"增量更新"
 
-界面经过三轮迭代：深夜蓝科技风 → Apple 液态玻璃 → **Scopy（ADI）深色仪器风**——中性深灰面板、钢青强调色、示波器迹线色，最终收敛在"像专业仪器软件"的克制风格上。中英双语一键切换，全量 retranslate。
+**① 降采样：1500 格的包络。**
 
-## 三、产品化收尾清单
+屏幕上一条 1000 像素宽的曲线，塞 256k 个采样点毫无意义——一个像素里可能挤着几百个点，画出来只是噪声。
 
-技术功能完成后，产品化还差最后一公里，逐项打勾：
+改成每约 1 ms 压一个 `(min, max)` 包络格，滚动窗口固定 1500 格。每个格子用一条竖线表示这 1 ms 内的幅度范围，视觉上恰好是振动信号的包络形态，信息密度反而比"密密麻麻的折线"更高。
 
-| 项 | 内容 |
-|----|------|
-| 品牌 | 代号 OCTET 全链路接入：窗口标题、设备名上报、USB 枚举名、CDC 提示符、文档 |
-| 界面文案 | "SD 卡"→"板载 SD NAND（非可插拔）"，LED 描述与硬件一一对应 |
-| 指示灯语义 | STATUS 心跳 / 电源 / CH1-8 采集 / 存储报警 / 网络状态，说明书逐灯定义 |
-| 文档 | 《使用说明书》（V1.5，PDF+MD）+《通信协议说明》（V1.4，PDF+MD）+ 本系列博客 |
-| 存储 | 参数存内部 FLASH（日志式追加），EEPROM/NOR 从 BOM 与固件中完全移除 |
-| 版本 | 固件/上位机统一 1.2.0，`--selftest` 自动化验证 |
+点数从"每帧几万"降到"每帧 1500"，这是数量级的变化。
 
-## 四、快速上手（说明书摘要）
+**② 原地更新：`coords()` 而不是重建。**
 
-1. **接线**：IEPE 传感器接 CH1–CH8，网线接 RJ45，上电。STATUS 灯进入心跳即系统就绪；
-2. **发现设备**：电脑与设备同网段（默认 `192.168.66.55`），双击上位机 exe → 点"发现设备"；
-3. **采集**：采集页勾选通道与采样率 → 勾"网络推流"点开始，监控页实时波形 + 4 路数字量阶梯图；勾"保存到板载存储"则脱机录制，事后文件管理页下载 `.bin` 并自动转 `.wav`；
-4. **校时**：网络页"校时"按钮把电脑时间写入 RTC，录制文件名时间即正确；
-5. **维护**：文件管理页 TFTP 批量下载/删除；存储剩余 <10MB 时存储报警灯快闪；恢复出厂后 IP 回到 192.168.66.55。
+既然格子数量固定（1500 格），图元数量也就固定。第一帧创建 1500 条线，之后每帧只调用 `coords()` 修改端点坐标——不销毁、不新建，不触发对象分配。
 
-## 五、写在系列最后
+网格线同样处理：位置本来就不变，创建一次之后只做平移。
 
-两个月，固件从第一行代码到 1.2.0 发布版，上位机从单文件脚本到产品级工具。复盘整个项目，最有价值的不是某个具体 bug 的修复，而是三条方法论：
+**③ 向量化解码。**
 
-1. **实证优先**：每个"应该是"都要变成"实测是"——寄存器回读、离线频谱、黑匣子轨迹、摄像头灯语，都是在为判断提供证据链；
-2. **可观测性是设计出来的**：live_trace、CDC 命令、LED 诊断位在需求阶段就写进了架构，调试时才有得用；
-3. **文档即产品**：协议文档、说明书、selftest 和固件一起进入版本管理，第三方集成、售后维护、二次开发才有可能。
+```python
+a = np.frombuffer(buf, dtype=np.uint8).reshape(-1, 3).astype(np.int32)
+v = a[:, 0] | (a[:, 1] << 8) | (a[:, 2] << 16)
+v = (v ^ 0x800000) - 0x800000   # 24bit 符号扩展
+```
 
-*设计笔记五篇到此结束；正式交付文档见第 6、7 篇。*
+同样的 6 KB 块，从 2000 次 Python 循环变成一次 numpy 调用。没有 numpy 环境时自动回退到纯 Python 分支，保证打包后的 exe 在任何机器上都不会崩。
+
+**④ 脏帧才重绘 + 30 FPS 上限。**
+
+不再"定时无条件重绘"，而是收到新数据时置脏标志，定时器到点检查：有脏数据才画，没变就跳过。同时把刷新率封顶在 30 FPS——人眼对波形滚动的感知在 30 FPS 已经饱和，再高只是烧 CPU。
+
+**⑤ 协议解析的 CRC 改成增量计算。**
+
+这一条不算绘制，但同样在吃 CPU：原来每解一帧都要把整个负载重新算一遍 CRC32。改成 `crc32(hdr)` 之后把前值传进去增量计算，省掉重复扫描。
+
+## 四、结果：从"卡成幻灯片"到 8.6 ms 一帧
+
+改完的实测数据：
+
+| 指标 | 优化后 |
+|---|---|
+| 单块解码 + 入队 | 0.089 ms |
+| 单帧重绘 | 8.6 ms |
+| 刷新率 | 稳定 30 FPS |
+| 8 通道 256k 时 CPU | 单核明显下降，界面可交互 |
+
+8.6 ms 意味着一帧的绘制占 33 ms 预算的四分之一，剩下四分之三留给解码、协议解析和 UI 事件——**终于有余量了**。
+
+## 五、复盘：三条关于"实时显示"的经验
+
+1. **屏幕分辨率和数据量要解耦。** 1000 像素宽的图，画 25 万个点没有信息增益。先降采样到与像素同量级，再谈渲染效率。
+2. **固定结构 + 原地更新，比"简洁的重建"快一个数量级。** 只要图元数量稳定，就不要每帧销毁重建——这是 GUI 里最容易被忽略的性能陷阱。
+3. **刷新要由数据驱动，不能被定时器驱动。** "没有新数据也重画"在低速时浪费、高速时积压，是卡顿的常见成因。
+
+*下一篇：11 颗指示灯的语义被推翻了三次——产品化里最容易被低估的一件小事。*
 
 </div>

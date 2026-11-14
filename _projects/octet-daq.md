@@ -51,13 +51,13 @@ The full engineering story, from frozen requirements to product release, is publ
 
 ## Design & debugging notes
 
-1. [Requirements and System Design](/posts/octet-01-requirements/)
-2. [Functional Decomposition and Software Architecture](/posts/octet-02-architecture/)
-3. [Ten Rounds of USB CDC Enumeration Debugging](/posts/octet-03-usb-enumeration/)
-4. [Off-Frame SPI, SD Overruns and the 256 kSPS Battle](/posts/octet-04-debugging-adc-sd/)
-5. [Protocol Design, Host Software and Product Release](/posts/octet-05-protocol-and-product/)
-6. [DAQ001 User Manual, V1.5](/posts/octet-06-user-manual/)
-7. [Communication Protocol and Data Format, V1.4](/posts/octet-07-protocol-spec/)
+1. [Why We Passed on a Faster SAR ADC](/posts/octet-01-requirements/)
+2. [256 kSPS Kept Dropping Blocks](/posts/octet-02-architecture/)
+3. [Every Init Returned OK, the Device Never Appeared](/posts/octet-03-usb-enumeration/)
+4. [Channel Chaos and a Stuck LSB](/posts/octet-04-debugging-adc-sd/)
+5. [6.2 MB/s and a UI That Stuttered](/posts/octet-05-protocol-and-product/)
+6. [Twelve LEDs, Three Rewrites](/posts/octet-06-user-manual/)
+7. [Four Fields Deleted Before Freezing the Header](/posts/octet-07-protocol-spec/)
 
 ## Status
 
@@ -100,11 +100,13 @@ The design and debugging notes above are published in full. Add the schematic, P
 
 ## 设计与调试实录
 
-1. [需求分析与总体方案](/posts/octet-01-requirements/)
-2. [功能分解与软件架构](/posts/octet-02-architecture/)
-3. [USB 虚拟串口的十轮攻防](/posts/octet-03-usb-enumeration/)
-4. [离帧协议、RX_OVERRUN 与 256 kSPS 攻坚](/posts/octet-04-debugging-adc-sd/)
-5. [通信协议、上位机与产品化交付](/posts/octet-05-protocol-and-product/)
+1. [8 通道 24bit 同步采样，为什么放弃了 SAR 型 ADC](/posts/octet-01-requirements/)
+2. [256kSPS 一开就丢块，问题在缓冲深度](/posts/octet-02-architecture/)
+3. [所有初始化都返回 OK，USB 设备却永远不出现](/posts/octet-03-usb-enumeration/)
+4. [数据全乱、最低位恒为 0：AD7768 的三个坑](/posts/octet-04-debugging-adc-sd/)
+5. [6.2MB/s 的数据流，上位机为什么卡成幻灯片](/posts/octet-05-protocol-and-product/)
+6. [12 颗指示灯，灯语被推翻了三次](/posts/octet-06-user-manual/)
+7. [16 字节帧头定稿前删掉了 4 个字段](/posts/octet-07-protocol-spec/)
 
 ## 当前状态
 

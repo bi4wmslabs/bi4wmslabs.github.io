@@ -1,85 +1,37 @@
 ---
-title: "OCTET #1: Requirements and System Design of an 8-Channel IEPE DAQ"
-title_zh: "OCTET 01 · 八通道 IEPE 采集器的需求分析与总体方案"
-excerpt: "How we froze the specs, picked the parts, and made three decisions that saved us later."
-excerpt_zh: "指标如何冻结、器件如何选型，以及三个在后期救了我们的需求决策。"
+title: "Why We Passed on a Faster SAR ADC for 8-Channel 24-bit Sampling"
+title_zh: "8 通道 24bit 同步采样，为什么最后放弃了更快的 SAR 型 ADC"
+excerpt: "SAR is faster and cheaper — so why did the design land on a delta-sigma part? Three constraints decided it."
+excerpt_zh: "SAR 更快、更便宜，为什么最后选了 Σ-Δ？把 8 通道同步、抗混叠、可诊断三条约束算清楚，答案就变了。"
 date: 2026-10-01 21:30:00 +0800
 categories: [octet, firmware]
 tags: [requirements, architecture, stm32h7, ad7768]
 permalink: /posts/octet-01-requirements/
 ---
 
-<span data-zh-title="OCTET 01 · 八通道 IEPE 采集器的需求分析与总体方案" hidden></span>
+<span data-zh-title="8 通道 24bit 同步采样，为什么最后放弃了更快的 SAR 型 ADC" hidden></span>
 
 <div class="bi-lang-en" markdown="1">
 
 <span class="bi-lang-mark" data-lang="en" hidden></span>
 
-> **OCTET series** · Part 1 of 7 · [Series index](/octet-series/) · [Next →](/posts/octet-02-architecture/)
+**OCTET series** · Part 1 of 7 · [Series index](/octet-series/) · [Next →](/posts/octet-02-architecture/)
 
-## What problem are we solving
+We opened the third selection meeting with three datasheets on the table, and everyone assumed SAR. It is fast, cheap, and has no group delay — the default answer for high-speed acquisition. The part we shipped is a delta-sigma converter.
 
-Condition monitoring of rotating machinery (fans, pumps, motors, spindles) always starts with **vibration data acquisition**, and IEPE accelerometers are the standard transducers. Off-the-shelf options sit at two extremes: benchtop DAQ cards are expensive and PC-bound; cheap loggers lack resolution, sync and networking.
+The requirement looked simple: eight IEPE channels, 24-bit, up to 256 kSPS each, sampled simultaneously. In bandwidth terms that is 8 × 256k × 3 bytes ≈ 6.1 MB/s, which already consumes most of a 100 Mbit link.
 
-We built something in between: a compact device that sits next to the machine, streams 24-bit vibration data to a PC over Ethernet in real time, and can also record to onboard storage on its own. Its codename is **OCTET** — *Octal-Channel Transducer & Event Telemetry* (a musical pun: 8 analog channels plus digital telemetry). Internal model number: DAQ001.
+Three things killed the SAR path:
 
-## The frozen requirement list
+- a multiplexed front end cannot sample eight channels at the same instant, which breaks every phase measurement;
+- each channel needs its own anti-alias filter, and eight of them must match each other;
+- a bare SAR tells software nothing about saturation or a disconnected sensor.
 
-| Category | Requirement |
-|----------|-------------|
-| Analog input | 8 IEPE channels, 24-bit simultaneous sampling, up to **256 kSPS** per channel |
-| Sample rates | 4k / 8k / 16k / 32k / 64k / 128k / 256k SPS |
-| Digital input | 4 DI channels with timestamps and accumulated edge counters |
-| Data out #1 | Onboard **SD NAND** (soldered chip, not a removable card), FAT32 recording |
-| Data out #2 | 100M Ethernet real-time streaming (TCP) with live waveform preview |
-| Management | UDP discovery, persistent parameters, factory reset, remote reboot |
-| File access | List / download / upload / delete (TFTP + TCP dual channel) |
-| Clock | Battery-backed RTC, host time sync, timestamped file names |
-| Indicators | Status + power + 8 channel LEDs + storage alarm + network LED |
-| Debug | USB CDC command line for field diagnosis without opening the case |
+The AD7768 answered all three: true simultaneous sampling, built-in anti-alias filtering, and an 8-bit status header per channel. One bonus we appreciated only later — its data port drives the STM32 SAI peripheral directly in slave DMA mode, so the CPU never touches the samples. When we later fought for a stable 256 kSPS, that path was the only link that never became a bottleneck.
 
-Two product-level constraints shaped the architecture:
+We also deleted two parts on the same logic: an external EEPROM and a NOR flash both became redundant once the MCU's dual-bank flash and the on-board SD NAND were in the design.
 
-1. **Recording and streaming are meant to be used one at a time** — 256 kSPS × 8 ch is about 6.2 MB/s, over half of a 100M link; the firmware exposes independent switches and the manual recommends picking one.
-2. **Cost convergence** — the external EEPROM and NOR Flash were cut late in the project; parameters moved into MCU-internal FLASH.
-
-## Part selection
-
-| Part | Model | Why |
-|------|-------|-----|
-| MCU | **STM32H753VIT6** | 480 MHz Cortex-M7, 1 MB RAM, dual-bank FLASH (parameter storage), ETH/SAI/SDMMC/OTG_FS all present |
-| ADC | **AD7768BSTZ** | 8-ch 24-bit simultaneous Σ-Δ; each frame carries an 8-bit status header (channel ID, saturation, error flags) |
-| PHY | **RTL8201FI** | 10/100M MII, cheap and available |
-| RTC | **PCF8563T** | I2C, battery backup |
-| Storage | **SD NAND** | NAND die in an SD-protocol package; FAT32 via FatFs; survives vibration better than card slots |
-
-A hidden bonus of the AD7768: its data port connects directly to the MCU's **SAI** peripheral as a slave DMA receiver — two DOUT lines (4 time slots each) carry all 8 channels with near-zero CPU cost. That is the hardware foundation of the 256 kSPS throughput.
-
-## System overview
-
-```
-IEPE×8 ──► AD7768 ──SAI(DMA)──► acquisition ring buffer ──┬─► SD NAND (FatFs)
-DI×4 ────► GPIO (1 ms scan + debounce)      (24 × 6 KB)   └─► TCP 5000 streaming
-                                                          └─► DIO mini-frames per block
-RTC(PCF8563) ──I2C──► timestamps
-RTL8201F ──MII──► ETH ──► lwIP ──► TCP5000 command channel
-                                   ├─► UDP 5001 discovery
-                                   └─► UDP 69 TFTP file channel
-USB OTG_FS ──► CDC virtual COM (logs + command line)
-Host PC: Python/Tkinter — discover → connect → preview → record → file manager
-```
-
-Software stack: **FreeRTOS** + **lwIP 2.x** + **FatFs R0.15** + a home-grown binary protocol (fixed header + CRC32). The host tool is deliberately Python + Tkinter — packaged as a single-file exe with zero third-party runtime installs, because "double-click and it works" is the passing grade for industrial software on customer PCs.
-
-## Three decisions that saved us later
-
-Half of the bugs we hit later were already anticipated at the requirements stage:
-
-1. **Everything moves by DMA**: SAI → ring buffer → SDMMC → Ethernet. Any CPU-polled leg collapses under interrupt latency at high sample rates (the SD RX_OVERRUN incident proved it — see part 4).
-2. **No large buffers on task stacks** — written into the coding standard (and still missed once; the 8 KB stack-overflow story is also in part 4).
-3. **The firmware carries its own black box**: noinit-RAM trace + LED morse codes + CDC command line, so evidence survives even when the serial port is dead and the system is hung.
-
-*Next: part 2 — functional decomposition and software architecture.*
+**The takeaway:** write the core requirement as one sentence before reading datasheets, and count the external support cost — filters, buffers, diagnostics — not just the chip price.
 
 </div>
 
@@ -87,75 +39,89 @@ Half of the bugs we hit later were already anticipated at the requirements stage
 
 <span class="bi-lang-mark" data-lang="zh" hidden></span>
 
-> **OCTET 系列** · 第 1 篇 / 共 7 篇 · [系列目录](/octet-series/) · [下一篇 →](/posts/octet-02-architecture/)
+> OCTET 系列 · 第 1 篇 / 共 7 篇 · [系列目录](/octet-series/)
 
-## 一、产品要解决什么问题
+选型会开到第三次，桌上摊着三份 ADC 规格书。所有人都觉得应该选 SAR——它快、便宜、没有群延迟，是"高速采集"的默认答案。最后定下来的却是 Σ-Δ。这篇记录那次论证怎么推翻直觉的。
 
-工业现场的旋转机械（风机、泵、电机、主轴）状态监测，绕不开**振动信号采集**，IEPE（压电集成电路）加速度传感器是这一领域的标配探头。但市面上的方案呈现两个极端：
+## 一、现象：8 个通道一起采，数据量先把人吓住了
 
-- **台式采集卡**：通道多、指标高，但价格贵、体积大、依赖工控机，不适合分布式部署；
-- **简易记录仪**：便宜，但采样率、位深、同步性不够，往往还不能联网。
+需求很朴素：8 通道 IEPE，24bit，单通道最高 256 kSPS，同步采样。
 
-我们要做的是介于两者之间的东西——一台**可以挂在设备旁边、通过网络把 24bit 振动数据实时推给电脑，也能脱机自己录到板载存储里**的嵌入式采集器。它的代号叫 **OCTET**（Octal-Channel Transducer & Event Telemetry，"八重奏"式的谐音双关：8 通道模拟 + 数字遥测），内部型号 DAQ001。
-
-## 二、需求清单
-
-把模糊的"做个采集器"收敛成可验收的指标，是整个项目最重要的一步。最终冻结的需求如下：
-
-| 类别 | 需求 |
-|------|------|
-| 模拟输入 | 8 通道 IEPE，24bit 同步采样，单通道最高 **256 kSPS** |
-| 采样率档位 | 4k / 8k / 16k / 32k / 64k / 128k / 256k SPS |
-| 数字输入 | 4 路干接点/电平 DI，随数据流带时间戳与累计边沿计数 |
-| 数据出口 ① | 板载 **SD NAND**（PCBA 集成芯片，非插拔卡）FAT32 录制 |
-| 数据出口 ② | 百兆以太网实时推流（TCP），上位机实时波形预览 |
-| 设备管理 | UDP 广播发现、参数掉电保存、恢复出厂、远程重启 |
-| 文件管理 | 文件列表 / 下载 / 上传 / 删除（TFTP + TCP 双通道） |
-| 时钟 | RTC 掉电走时，上位机可校时，录制文件按时间命名 |
-| 指示 | 1 颗状态灯 + 电源灯 + 8 通道灯 + 存储报警灯 + 网络灯 |
-| 调试 | USB 虚拟串口（CDC）命令行，现场免拆壳排查 |
-
-两条关键的产品级约束，直接决定了后面的架构：
-
-1. **录制与推流二选一为主**——百兆链路 + 6.2 MB/s 的 256k 全通道数据流，同时落盘和推流会互相挤压，产品语义上做独立开关、建议用户二选一；
-2. **成本收敛**——后期明确砍掉外部 EEPROM（AT24C128C）和 NOR Flash（W25Q128），参数存储改用 MCU 内部 FLASH。
-
-## 三、核心器件选型
-
-| 器件 | 型号 | 选型理由 |
-|------|------|----------|
-| MCU | **STM32H753VIT6** | 480MHz Cortex-M7、1MB RAM、双 bank FLASH（参数存储）、ETH/SAI/SDMMC/OTG_FS 全齐 |
-| ADC | **AD7768BSTZ** | 8 通道 24bit 同步采样 Σ-Δ，每通道自带 8bit 状态头（含通道号、饱和、错误标志），抗混叠滤波器内置 |
-| PHY | **RTL8201FI** | 10/100M，MII 接口，成本低、货源稳 |
-| RTC | **PCF8563T** | I2C 接口、带电池后备，掉电走时 |
-| 存储 | **SD NAND** | 焊接式 NAND 封装成 SD 协议，FAT32 直接用 FatFs 管理，抗振动优于插拔卡 |
-
-AD7768 的选择有个隐藏红利：它的数据口可以直连 MCU 的 **SAI** 外设做从机 DMA 接收，2 条 DOUT 线（每线 4 通道时隙）就能搬完 8 通道数据，CPU 几乎零开销——这是后面 256kSPS 大吞吐的硬件基础。
-
-## 四、总体架构
+把这句话翻译成带宽，是第一个让人清醒的时刻：
 
 ```
-IEPE×8 ──► AD7768 ──SAI(DMA)──► 采集环形缓冲 ──► ┬─► SD NAND（FatFs 落盘）
-DI×4 ───► GPIO(1ms 扫描+消抖)        (24块×6KB)   └─► TCP 5000 推流
-                                                  └─► DIO 小帧随块下发
-RTC(PCF8563) ──I2C──► 时间戳
-RTL8201F ──MII──► STM32 ETH ──► lwIP ──► TCP5000 命令通道
-                                  ├─► UDP 5001 发现
-                                  └─► UDP 69  TFTP 文件通道
-USB OTG_FS ──► CDC 虚拟串口（日志 + 命令行）
-PC 上位机：Python/Tkinter，发现→连接→预览→录制→文件管理→校时
+8 通道 × 256k SPS × 3 字节 = 6.14 MB/s
 ```
 
-软件栈：**FreeRTOS**（任务调度）+ **lwIP 2.x**（网络）+ **FatFs R0.15**（文件系统）+ 自研二进制协议（帧头 + CRC32）。上位机刻意选了 Python + Tkinter——零第三方依赖打包成单文件 exe，现场电脑双击就能用，不需要安装环境。
+加上帧头、时间戳和状态字节，实际推流约 6.2 MB/s。这个数字意味着两件事：
 
-## 五、需求阶段就定下的三个"防坑"决策
+- 百兆以太网的理论上限 12.5 MB/s，实际能跑 8~9 MB/s，**刚刚够，几乎没有余量**；
+- 板载存储必须跟得上 6 MB/s 的持续写入，而且不能出现毫秒级的写阻塞。
 
-回头看，这个项目后期踩的坑，一半都能在需求阶段提前规避。我们在方案冻结时明确写下：
+再看市面上的现成方案，两头都不合适：
 
-1. **数据通路必须 DMA 全程**：SAI→环形缓冲→SDMMC→以太网，任何一段用 CPU 轮询搬运，在高采样率下都会被中断延迟拖垮（后来 SD 的 RX_OVERRUN 事故验证了这条）；
-2. **任何大缓冲禁止放任务栈上**：写入编码规范（这条仍然漏了一次，第 4 篇的 8KB 栈溢出事故见分晓）；
-3. **固件自带"黑匣子"**：noinit RAM 轨迹记录 + LED 摩尔斯码 + CDC 命令行，保证"串口看不见、系统死了"的情况下依然能取证。
+- **台式采集卡**：通道多、指标高，但价格贵、体积大、绑死在工控机上，没法挂到设备旁边做分布式部署；
+- **简易记录仪**：便宜，但采样率、位深、同步性都不够，通常还不能联网。
 
-*下一篇：把需求拆成模块——[系统功能分解与嵌入式软件架构](/posts/octet-02-architecture/)。*
+中间那块空地，就是我们要占的位置。但"占中间"不构成选型依据——真正决定 ADC 的，是下面三个约束。
+
+## 二、分析：SAR 在这三个地方会塌
+
+SAR 型的优势是公认的：转换快、延迟低、单通道吞吐高。问题是它的优势建立在"分时复用"上，而我们恰恰不要分时。
+
+**第一刀：同步性。**
+
+高速多通道 SAR 的常规做法是前面挂多路复用器，逐通道轮流转换。8 个通道分时采样，意味着通道之间天然存在固定时差——一个 256 kSPS 的 8 通道系统，相邻通道最大时间差可以到微秒级。
+
+对振动监测来说这是致命的。测相位、做互相关、算通道间的传递函数，全都建立在"同一时刻"这个前提上。分时采样的数据在时域上就是错的，后期怎么补都补不回来。要真同步，就得 8 片 SAR 并排 + 8 套采样保持，成本和布板面积立刻翻倍。
+
+**第二刀：抗混叠。**
+
+SAR 前面必须有模拟低通滤波器，否则高频分量会折叠进带内，而且折叠后无法区分。256 kSPS 的采样率，抗混叠截止点要压到 100 kHz 附近，还得有足够陡的滚降。
+
+8 个通道就是 8 套滤波器。每套至少二阶、精密阻容、通道间要匹配——一致性稍有差异，通道间的幅频响应就对不齐。更麻烦的是，这些滤波器占的 PCB 面积比 ADC 本身还大，而模拟前端的布局稍有不慎，噪声就上来了。
+
+**第三刀：状态信息。**
+
+工业现场最怕的不是"数据不准"，而是"数据不准但你不知道"。传感器断线、超量程饱和、通道接错，如果 ADC 只吐纯净样本，这些异常只能靠软件猜。
+
+SAR 方案里，这些都得靠外部电路加 MCU 的 ADC 去监测，又是一轮通道、又一轮校准。
+
+## 三、根因：我们要的不是"快"，是"同步且可诊断"
+
+把三轮讨论压成一句话：**这个产品的核心指标不是单通道速度，而是 8 个通道在同一时刻的、带状态标记的、不需要外部模拟前端配合的数据。**
+
+这句话一写下来，选型逻辑就变了。不是在比谁的转换时间短，而是在比谁能让整条链路更短。
+
+## 四、解决：Σ-Δ + 内置抗混叠 + 直连 SAI
+
+最终选的 AD7768BSTZ，恰好把这三点都接住了。
+
+**同步性**：8 通道真正同时采样，每个通道独立的 Σ-Δ 调制器，共享同一时钟。通道间没有时差这个变量，后面所有相位相关的算法都不需要修正。
+
+**抗混叠**：滤波器内置。这一条省掉的不只是 8 套阻容——整块模拟前端的布局压力、通道一致性校准、以及由此带来的噪声耦合风险，全部消失了。板上留给 IEPE 偏置和保护的面积一下子宽裕起来。
+
+**可诊断**：每通道数据自带 8 bit 状态头，包含通道号、饱和标志、错误标志。软件拿到的不是一个裸样本，而是"样本 + 它当时的状态"。传感器断了、通道接错了、信号顶到满量程了，固件立刻知道，不用等用户发现波形不对。
+
+还有一个当时没意识到、后来救了整个项目的红利：
+
+AD7768 的数据口可以直接接 STM32H753 的 **SAI** 外设做从机 DMA 接收。两条 DOUT 线（每线 4 个通道时隙）就能把 8 通道数据搬完，CPU 全程不参与。等到后面攻 256 kSPS 吞吐时，这条硬件通路是唯一没有成为瓶颈的环节。
+
+## 五、顺带砍掉的两颗芯片
+
+同一个逻辑还砍掉了两个原有设计：
+
+- **AT24C128C（EEPROM）**：参数存储只有几 KB，MCU 内部 FLASH 的双 bank 完全够用，还能省掉 I2C 走线和一颗器件；
+- **W25Q128（NOR Flash）**：原计划用来存日志和配置备份，但板载 SD NAND 已经把文件系统包了，再加一颗纯属重复投资。
+
+选型不是"往上加"，很多时候是"敢删"。每删一颗器件，就少一条失效路径、少一份 BOM 成本、少一个现场排查时要想的变量。
+
+## 六、复盘：三条能带走的选型原则
+
+1. **先写清楚"核心指标是哪一句话"，再去看规格书。** 指标没冻结时，任何参数都能找到支持它的器件；一旦写成一句话，不合适的会自己出局。
+2. **把"外部配合成本"算进选型。** SAR 便宜，但它要求 8 套模拟前端、8 套滤波器、额外的状态监测电路——这些都要面积、要调试、要一致性校准。单看芯片价格会得出完全相反的结论。
+3. **优先选"把问题在芯片内解决"的方案。** 内置抗混叠、内置状态头，本质是把系统级难题收敛到一颗器件里。对中小团队，这比省几块钱重要得多。
+
+*下一篇：选型定完、代码写完，8 通道 256k 一跑就报故障码 7——账算错在一个缓冲深度上。*
 
 </div>
