@@ -10,6 +10,7 @@ summary_zh: "11×10 中文文字钟 DIY 套件：110+4 灯珠电路板、亚克�
 featured: true
 pinned: true
 image: "/assets/images/products/wordclock-zh10x11.jpg"
+github: "https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH"
 price: "Price on request"
 price_zh: "询价"
 ---
@@ -28,7 +29,7 @@ A DIY kit for the **11×10 Chinese word clock**: a character grid where Chinese 
 
 ![Assembled Chinese word clock: current time 3:30 PM, Saturday, cloudy, 7 °C](/assets/images/products/wordclock-zh10x11.jpg)
 
-The firmware is based on the open-source [Multilayout-ESP-Wordclock 5.0.0](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) with a custom ZH10x11 Chinese layout, keyless Open-Meteo weather (just type a city in the web UI), optional QWeather, OTA updates, and a fully bilingual web interface. See the [project page](/projects/wordclock/) for the full feature list and the [7-part build & debugging series](/wordclock-series/).
+The firmware is based on the open-source [Multilayout-ESP-Wordclock 5.0.0](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) — full fork sources: [github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH) — with a custom ZH10x11 Chinese layout, keyless Open-Meteo weather (just type a city in the web UI), optional QWeather, OTA updates, and a fully bilingual web interface. See the [project page](/projects/wordclock/) for the full feature list and the [7-part build & debugging series](/wordclock-series/).
 
 ## What the kit contains
 
@@ -65,7 +66,7 @@ Pricing and the checkout link are being finalised. Until then, use the enquiry b
 
 ![组装完成的中文文字钟：当前时间下午三点三十，星期六，多云，7 度](/assets/images/products/wordclock-zh10x11.jpg)
 
-固件基于开源项目 [Multilayout-ESP-Wordclock 5.0.0](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) 二次开发，包含自绘 ZH10x11 中文布局、免 key 的 Open-Meteo 天气（网页里只填城市名）、可选的和风天气、OTA 升级和完整的中英双语网页界面。完整功能列表见[项目页](/projects/wordclock/)，开发过程见[系列文章](/wordclock-series/)（共 7 篇）。
+固件基于开源项目 [Multilayout-ESP-Wordclock 5.0.0](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) 二次开发——完整分支源码：[github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH)，包含自绘 ZH10x11 中文布局、免 key 的 Open-Meteo 天气（网页里只填城市名）、可选的和风天气、OTA 升级和完整的中英双语网页界面。完整功能列表见[项目页](/projects/wordclock/)，开发过程见[系列文章](/wordclock-series/)（共 7 篇）。
 
 ## 套件包含
 

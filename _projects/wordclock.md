@@ -11,6 +11,7 @@ pinned: true
 image: "/assets/images/projects/wordclock-zh10x11.jpg"
 excerpt: "A 110-LED Chinese word clock built on the open Multilayout-ESP-Wordclock firmware: custom ZH10x11 film layout, weather and weekday rows, 1 °C temperature display, dual weather sources, and a Chinese web UI."
 excerpt_zh: "基于开源 Multilayout-ESP-Wordclock 固件的 110 颗灯珠中文字钟：自绘 ZH10x11 丝印布局，扩展星期/天气/温度行，温度精确到 1℃，双天气数据源，中文网页配置界面。"
+github: "https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH"
 ---
 
 <!-- 页面大标题的中文（放在正文第一行，不会显示） -->
@@ -58,7 +59,9 @@ The web UI is fully bilingual (EN/中文 via the selector at the top). The setti
 
 ## Status
 
-Hardware v1 (LED board, silkscreen film, support plate) is built and validated; firmware is in daily use. Design files and firmware sources are being cleaned up for release — the upstream project and this fork's changelog will be linked here once published.
+Hardware v1 (LED board, silkscreen film, support plate) is built and validated; firmware is in daily use.
+
+**Source code:** [github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH) — the full fork (ZH10x11 layout, weather back-ends, Chinese web UI), forked from [ESPWortuhr/Multilayout-ESP-Wordclock](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) (BSD-3-Clause).
 
 </div>
 
@@ -104,6 +107,8 @@ Hardware v1 (LED board, silkscreen film, support plate) is built and validated; 
 
 ## 当前状态
 
-硬件第一版（灯板、丝印板、隔光板）已制作并验证通过，固件在日常使用中。设计文件与固件源码正在整理，发布后会在此处挂出上游项目与本分支的变更记录。
+硬件第一版（灯板、丝印板、隔光板）已制作并验证通过，固件在日常使用中。
+
+**源码仓库**：[github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH)——包含本分支全部改动（ZH10x11 布局、天气后端、中文界面），基于 [ESPWortuhr/Multilayout-ESP-Wordclock](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock)（BSD-3-Clause）二次开发。
 
 </div>
