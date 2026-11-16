@@ -20,7 +20,7 @@ series_total: 7
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
-  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 3 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-02-architecture/">← Prev</a> · <a href="/posts/octet-04-debugging-adc-sd/">Next →</a></p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 3 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-02-architecture/">← Prev</a> · <a href="/posts/octet-04-debugging-adc-sd/">Next →</a> · <a href="https://github.com/bi4wmslabs/octet">Source code</a></p>
 </div>
 
 Every initialisation call returned HAL_OK. The clock tree checked out, the GPIO alternate functions were right, the descriptors looked correct, and the serial log printed "init success" eight times. Then we plugged the board in and the device manager showed nothing at all — not "unknown device", nothing, as if the cable were not connected.
@@ -45,7 +45,7 @@ Two smaller ones cost half a day each: a callback returning early so EP0 was ski
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
-  <p class="bi-series-nav">设计与调试实录 · 第 3 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-02-architecture/">← 上一篇</a> · <a href="/posts/octet-04-debugging-adc-sd/">下一篇 →</a></p>
+  <p class="bi-series-nav">设计与调试实录 · 第 3 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-02-architecture/">← 上一篇</a> · <a href="/posts/octet-04-debugging-adc-sd/">下一篇 →</a> · <a href="https://github.com/bi4wmslabs/octet">源码仓库</a></p>
 </div>
 
 这是整个项目里最荒谬的两天：`HAL_PCD_Init()` 返回 HAL_OK，时钟配置返回 HAL_OK，中断使能也返回 HAL_OK，串口日志一行行打出来，“初始化成功”打了七八遍。然后插上电脑，设备管理器里什么都没有。不是“无法识别”，是**什么都没有**——像这根线根本没插。

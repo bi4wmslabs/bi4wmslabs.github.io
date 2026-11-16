@@ -31,7 +31,7 @@ An assembled **OCTET (DAQ001)** unit — an 8-channel, 24-bit simultaneous-sampl
 - UDP discovery, TFTP file transfer, USB CDC field diagnostics
 - Binary host protocol with CRC32 for third-party integration
 
-See the [OCTET project page](/projects/octet-daq/) for the full specification and the [five-part design & debugging series](/octet-series/) for measured results and known limitations.
+See the [OCTET project page](/projects/octet-daq/) for the full specification and the [seven-part design & debugging series](/octet-series/) for measured results and known limitations.
 
 ## What's included
 
@@ -39,7 +39,7 @@ The final packing list (unit, cables, power supply, mounting hardware and docume
 
 ## Pricing, delivery and support
 
-Pricing and the checkout link are being finalised. Until then, use the enquiry button to ask about availability, lead time and shipping destinations. Digital documentation and the host protocol specification are published with the project notes.
+Pricing and the checkout link are being finalised. Until then, use the enquiry button to ask about availability, lead time and shipping destinations. Digital documentation and the host protocol specification are published with the project notes, and the firmware and host tools source code is public in **[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)**.
 
 ## License and support
 
@@ -69,7 +69,7 @@ State the hardware and firmware licenses, the warranty terms and the support cha
 
 ## 价格、交付与支持
 
-价格与结账链接尚在确认。在此之前，可通过询价按钮咨询供货情况、交期与可配送地区。设计文档与上位机协议说明已随项目笔记公开。
+价格与结账链接尚在确认。在此之前，可通过询价按钮咨询供货情况、交期与可配送地区。设计文档与上位机协议说明已随项目笔记公开，固件与上位机源码见 **[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)**。
 
 ## 许可与支持
 

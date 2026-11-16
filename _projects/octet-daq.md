@@ -25,7 +25,7 @@ excerpt_zh: "8 通道 IEPE 振动采集器：24bit 同步采样最高 256 kSPS�
 
 **OCTET** (*Octal-Channel Transducer & Event Telemetry*, internal model **DAQ001**) is a compact data acquisition unit built for condition monitoring of rotating machinery — fans, pumps, motors and spindles. It sits next to the machine, digitises eight IEPE accelerometers simultaneously, and either streams the data to a PC over 100M Ethernet or records it to onboard storage on its own.
 
-The full engineering story, from frozen requirements to product release, is published as the [five-part OCTET series](/octet-series/).
+The full engineering story, from frozen requirements to product release, is published as the [seven-part OCTET series](/octet-series/). Firmware and host source code are public in **[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)** (`firmware/` + `host/`).
 
 ## Specifications
 
@@ -59,9 +59,11 @@ The full engineering story, from frozen requirements to product release, is publ
 6. [Twelve LEDs, Three Rewrites](/posts/octet-06-user-manual/)
 7. [Four Fields Deleted Before Freezing the Header](/posts/octet-07-protocol-spec/)
 
-## Status
+## Source code
 
-The design and debugging notes above are published in full. Add the schematic, PCB files, BOM, firmware release and calibration procedure here once they are ready for distribution; until then, only validated figures from the notes are quoted on this page.
+**[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)** — the complete STM32H753 firmware (`firmware/`, CMake + arm-none-eabi-gcc, FreeRTOS + lwIP 2.2.1) and the Python host tools (`host/`, tkinter GUI plus CLI, protocol v1.4). Both build from source; the ST HAL, FreeRTOS and lwIP trees are fetched with `firmware/tools/fetch_deps.ps1` rather than vendored.
+
+The schematic, PCB files, BOM and calibration procedure will be added here once they are ready for distribution; until then, only validated figures from the notes are quoted on this page.
 
 </div>
 
@@ -74,7 +76,7 @@ The design and debugging notes above are published in full. Add the schematic, P
 
 **OCTET**（*Octal-Channel Transducer & Event Telemetry*，内部型号 **DAQ001**）是一台面向旋转设备状态监测的紧凑型数据采集器，适用于风机、水泵、电机与主轴。设备就近安装在机器旁，对 8 路 IEPE 加速度传感器同步采样，既可以通过百兆以太网把数据实时流传到上位机，也可以脱离电脑独立录制到板载存储器。
 
-从指标冻结到产品化交付的完整过程，已整理为 [OCTET 设计与调试实录系列](/octet-series/)（共 7 篇）。
+从指标冻结到产品化交付的完整过程，已整理为 [OCTET 设计与调试实录系列](/octet-series/)（共 7 篇）。固件与上位机源码已公开：**[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)**（`firmware/` + `host/`）。
 
 ## 规格
 
@@ -108,8 +110,10 @@ The design and debugging notes above are published in full. Add the schematic, P
 6. [12 颗指示灯，灯语被推翻了三次](/posts/octet-06-user-manual/)
 7. [16 字节帧头定稿前删掉了 4 个字段](/posts/octet-07-protocol-spec/)
 
-## 当前状态
+## 源码
 
-上述设计与调试笔记已完整公开。原理图、PCB、BOM、固件发布包与校准流程待整理完成后补充到本页；在此之前，本页只引用笔记中已经验证过的数据。
+**[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)** —— STM32H753 固件（`firmware/`，CMake + arm-none-eabi-gcc，FreeRTOS + lwIP 2.2.1）与 Python 上位机（`host/`，tkinter 图形界面 + 命令行，协议 V1.4）完整源码，均可从源码编译；ST HAL、FreeRTOS、lwIP 不随仓库分发，用 `firmware/tools/fetch_deps.ps1` 补齐。
+
+原理图、PCB、BOM 与校准流程待整理完成后补充到本页；在此之前，本页只引用笔记中已经验证过的数据。
 
 </div>

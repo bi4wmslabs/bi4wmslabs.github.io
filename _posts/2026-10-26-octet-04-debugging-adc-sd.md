@@ -20,7 +20,7 @@ series_total: 7
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
-  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 4 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-03-usb-enumeration/">← Prev</a> · <a href="/posts/octet-05-protocol-and-product/">Next →</a></p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 4 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-03-usb-enumeration/">← Prev</a> · <a href="/posts/octet-05-protocol-and-product/">Next →</a> · <a href="https://github.com/bi4wmslabs/octet">Source code</a></p>
 </div>
 
 The AD7768 does not hand you a register read. Each frame is 32 bits: an 8-bit status header followed by 24 bits of data. Three separate failures came out of misunderstanding that frame, and each one looked completely different.
@@ -41,7 +41,7 @@ The AD7768 does not hand you a register read. Each frame is 32 bits: an 8-bit st
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
-  <p class="bi-series-nav">设计与调试实录 · 第 4 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-03-usb-enumeration/">← 上一篇</a> · <a href="/posts/octet-05-protocol-and-product/">下一篇 →</a></p>
+  <p class="bi-series-nav">设计与调试实录 · 第 4 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-03-usb-enumeration/">← 上一篇</a> · <a href="/posts/octet-05-protocol-and-product/">下一篇 →</a> · <a href="https://github.com/bi4wmslabs/octet">源码仓库</a></p>
 </div>
 
 AD7768 的输出不是“标准 SPI 读一个寄存器”那么简单。它每帧 32 位，前 8 位是状态头，后 24 位才是数据——这叫“离帧”。我们在这上面连栽三次，每一次的现象都完全不同，但根子都在同一个地方：**没有把“帧”当成一个整体去理解。**

@@ -13,7 +13,7 @@ layout: single
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
-  <p class="bi-series-nav">Design &amp; Debugging Notes · 7 parts · Part 1 published 2026-10-01</p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · 7 parts · Part 1 published 2026-10-01 · <a href="https://github.com/bi4wmslabs/octet">Source code</a></p>
 </div>
 
 Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit vibration DAQ. Each one follows the same shape: the symptom that stopped us, the analysis that found the real cause, and the fix that held.
@@ -26,6 +26,8 @@ Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit
 6. **[Twelve LEDs, Three Rewrites](/posts/octet-06-user-manual/)** — the indicator language is product semantics, not debug output. · 2026-11-09
 7. **[Four Fields Deleted Before Freezing the Header](/posts/octet-07-protocol-spec/)** — one byte of misalignment, two days of integration. · 2026-11-14
 
+Source code for the whole series is public: **[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)** — `firmware/` holds the STM32H753 firmware (CMake + arm-none-eabi-gcc, FreeRTOS + lwIP), `host/` holds the Python host tools (tkinter GUI and CLI).
+
 </div>
 
 <div class="bi-lang-zh" markdown="1">
@@ -34,7 +36,7 @@ Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
-  <p class="bi-series-nav">设计与调试实录 · 共 7 篇 · 首篇发布于 2026-10-01</p>
+  <p class="bi-series-nav">设计与调试实录 · 共 7 篇 · 首篇发布于 2026-10-01 · <a href="https://github.com/bi4wmslabs/octet">源码仓库</a></p>
 </div>
 
 **OCTET**（内部型号 DAQ001）是一台 8 通道 IEPE 24bit 工业振动数据采集器。这个系列共 7 篇，每篇都按同一个套路写：**出了什么现象 → 怎么分析 → 根因在哪 → 怎么修好 → 能带走什么**。
@@ -46,5 +48,7 @@ Seven field notes on **OCTET** (internal model DAQ001), an 8-channel IEPE 24-bit
 5. **[6.2MB/s 的数据流，上位机为什么卡成幻灯片](/posts/octet-05-protocol-and-product/)** —— 数据一个不少，卡在全量重绘和逐样本解码上。 · 2026-11-02
 6. **[12 颗指示灯，灯语被推翻了三次](/posts/octet-06-user-manual/)** —— 灯不是调试输出，是产品语义。 · 2026-11-09
 7. **[16 字节帧头定稿前，我们删掉了 4 个字段](/posts/octet-07-protocol-spec/)** —— 一字节错位停了两天联调，删字段反而更好用。 · 2026-11-14
+
+这个系列的源码已全部公开：**[bi4wmslabs/octet](https://github.com/bi4wmslabs/octet)** —— `firmware/` 是 STM32H753 固件（CMake + arm-none-eabi-gcc，FreeRTOS + lwIP），`host/` 是 Python 上位机（tkinter 图形界面 + 命令行工具）。
 
 </div>

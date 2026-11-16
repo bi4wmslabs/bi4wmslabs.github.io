@@ -20,7 +20,7 @@ series_total: 7
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
-  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 6 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-05-protocol-and-product/">← Prev</a> · <a href="/posts/octet-07-protocol-spec/">Next →</a></p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 6 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-05-protocol-and-product/">← Prev</a> · <a href="/posts/octet-07-protocol-spec/">Next →</a> · <a href="https://github.com/bi4wmslabs/octet">Source code</a></p>
 </div>
 
 The PCB reserved space for twelve channel LEDs. The first indicator table was written and immediately undone by one question from a field engineer: "the unit is recording — which LED tells me that?"
@@ -46,7 +46,7 @@ The "returning" clause mattered most: without it the light latches in the alarm 
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
-  <p class="bi-series-nav">设计与调试实录 · 第 6 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-05-protocol-and-product/">← 上一篇</a> · <a href="/posts/octet-07-protocol-spec/">下一篇 →</a></p>
+  <p class="bi-series-nav">设计与调试实录 · 第 6 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-05-protocol-and-product/">← 上一篇</a> · <a href="/posts/octet-07-protocol-spec/">下一篇 →</a> · <a href="https://github.com/bi4wmslabs/octet">源码仓库</a></p>
 </div>
 
 硬件画板的时候留了 12 颗通道灯的位置。等软件接手，第一版灯语表写完，被现场工程师一句话问住：“设备在录数据，我看哪颗灯？”——那一刻才发现，我们定义了 12 颗灯怎么亮，却没定义**人怎么用它判断状态**。

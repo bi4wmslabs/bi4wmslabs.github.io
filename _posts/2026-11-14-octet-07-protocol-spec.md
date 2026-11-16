@@ -20,7 +20,7 @@ series_total: 7
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 · 8-Channel IEPE Acquisition Unit</p>
-  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 7 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-06-user-manual/">← Prev</a></p>
+  <p class="bi-series-nav">Design &amp; Debugging Notes · Part 7 of 7 · <a href="/octet-series/">Series index</a> · <a href="/posts/octet-06-user-manual/">← Prev</a> · <a href="https://github.com/bi4wmslabs/octet">Source code</a></p>
 </div>
 
 The first protocol revision went out for joint integration and came back the next day: "parsing goes wrong from byte 9 onward." One byte of misalignment cost two days on both sides, and both teams believed they had implemented the document correctly.
@@ -43,7 +43,7 @@ Two rules were made explicit: serialise field by field, never `memcpy` a struct;
 
 <div class="bi-series">
   <p class="bi-series-name">OCTET DAQ001 八通道 IEPE 采集器</p>
-  <p class="bi-series-nav">设计与调试实录 · 第 7 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-06-user-manual/">← 上一篇</a></p>
+  <p class="bi-series-nav">设计与调试实录 · 第 7 篇 / 共 7 篇 · <a href="/octet-series/">系列目录</a> · <a href="/posts/octet-06-user-manual/">← 上一篇</a> · <a href="https://github.com/bi4wmslabs/octet">源码仓库</a></p>
 </div>
 
 第一版协议发出去做联合调试，对面工程师第二天回了句话：“我们按文档解析，第 9 个字节开始全乱了。” 一个字节的错位，让两边的联调停了整整两天。最后定稿的帧头是 16 字节——比第一版少了 4 个字段，却再没出现过解析分歧。
