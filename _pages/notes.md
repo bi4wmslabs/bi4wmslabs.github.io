@@ -16,6 +16,8 @@ layout: home
 
 {% include notes-group.html id="octet" key="OCTET DAQ001 八通道 IEPE 采集器" en="OCTET DAQ001 · 8-Channel IEPE Acquisition Unit" zh="OCTET DAQ001 八通道 IEPE 采集器" desc_en="Seven notes on requirements, architecture, USB enumeration, ADC and storage debugging, protocol, user manual and the formal protocol specification." desc_zh="七篇设计与调试实录：需求、架构、USB 枚举、ADC 与存储调试、协议、使用说明书，以及正式通信协议规范。" index_url="/octet-series/" index_en="Open the series index →" index_zh="打开系列目录 →" %}
 
+{% include notes-group.html id="wordclock" key="从一块灯板到一台中文字钟" en="From an LED Board to a Chinese Word Clock" zh="从一块灯板到一台中文字钟" desc_en="Seven notes on a Chinese word clock built on Multilayout-ESP-Wordclock 5.0.0: three stacked boards, the Chinese firmware port, and every failure from a dark weather row to one degree of temperature precision." desc_zh="七篇改造实录：基于 Multilayout-ESP-Wordclock 5.0.0 的中文字钟——三层硬件、中文固件移植，以及从天气两行不亮到 1℃ 精度的每一次排查。" index_url="/wordclock-series/" index_en="Open the series index →" index_zh="打开系列目录 →" %}
+
 {% include notes-group.html id="kicad" key="KiCad Tutorial 2026" en="KiCad Tutorial 2026" zh="KiCad 2026 完整教程" desc_en="One complete walkthrough with 60 annotated screenshots: schematic, DRC, PCB layout, useful tools and manufacturing outputs." desc_zh="一份完整实操指南，60 张步骤截图覆盖原理图、DRC、PCB 布局、实用工具与生产文件输出。" %}
 
 {% include notes-group.html id="simplefoc" key="SimpleFOC Integrated Board" en="SimpleFOC Integrated Board · From Zero to One" zh="SimpleFOC 一体板 · 从零到一" desc_en="Four parts on why a tail-mounted driver board, schematic and PCB layout, first power-up and software setup, then code reading and the heartbeat indicator." desc_zh="四篇连载：为什么做尾置一体板、原理图与 PCB 布局、首次上电与软件配置、代码解读与心跳灯。" %}
