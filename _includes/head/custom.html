@@ -30,9 +30,54 @@
 })();
 </script>
 
+<!-- =========================================================
+     Google Analytics 4 + Google 同意模式 v2（Consent Mode v2）
+     ---------------------------------------------------------
+     只在生产构建（JEKYLL_ENV=production）输出，本地预览不发送数据。
+     analytics_storage / ad_storage / ad_user_data / ad_personalization
+     默认全部 denied；只有访客在 _includes/footer/custom.html 的
+     双语同意横幅里点了「同意统计」，才会 gtag('consent','update') 放开。
+     ========================================================= -->
+{% if jekyll.environment == "production" and site.ga4_measurement_id and site.ga4_measurement_id != "" %}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){window.dataLayer.push(arguments);}
+  gtag("consent", "default", {
+    "ad_storage": "denied",
+    "ad_user_data": "denied",
+    "ad_personalization": "denied",
+    "analytics_storage": "denied",
+    "functionality_storage": "granted",
+    "security_storage": "granted",
+    "wait_for_update": 500
+  });
+  /* 回访访客：恢复此前在本站保存的选择 */
+  (function () {
+    try {
+      if (localStorage.getItem("bi4wms-consent-v2") === "granted") {
+        gtag("consent", "update", {
+          "analytics_storage": "granted",
+          "ad_storage": "granted",
+          "ad_user_data": "granted",
+          "ad_personalization": "granted"
+        });
+      }
+    } catch (e) {}
+  })();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.ga4_measurement_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){window.dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "{{ site.ga4_measurement_id }}", { "anonymize_ip": true });
+</script>
+{% endif %}
+
 <!-- Google AdSense：仅在 _config.yml 里填了 adsense_client 时才输出。
-     空值 = 不加载任何广告脚本，便于先补齐内容与合规页面；
-     申请通过后填 ca-pub-XXXXXXXXXXXXXXXX，此处自动加上验证 meta 与广告脚本。 -->
+     现在保持空值 = 不加载任何广告脚本；ads.txt 已写入真实 pub ID，
+     等 AdSense 后台把本站添加为站点并通过审核后，填
+     ca-pub-9388766068727097 即可自动加上验证 meta 与 adsbygoogle.js。 -->
 {% if site.adsense_client and site.adsense_client != "" %}
 <meta name="google-adsense-account" content="{{ site.adsense_client }}">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.adsense_client }}" crossorigin="anonymous"></script>

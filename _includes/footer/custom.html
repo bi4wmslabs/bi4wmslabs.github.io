@@ -1,0 +1,54 @@
+<!-- =========================================================
+     Cookie 同意横幅（配合 head/custom.html 的 Consent Mode v2）
+     ---------------------------------------------------------
+     - 首次访问显示；选择记在 localStorage: bi4wms-consent-v2
+     - granted → gtag('consent','update') 放开统计 cookie
+     - denied  → 保持全部 denied，仅必要功能可用
+     - 文案用 [data-zh] 交给全站唯一的 v6 引擎做中英切换
+     - 暴露 window.bi4wmsOpenConsent()，供 /privacy/ 页随时撤回/修改
+     ========================================================= -->
+<div id="bi-consent" class="bi-consent" role="dialog" aria-live="polite" hidden>
+  <p class="bi-consent-title" data-zh="Cookie 与统计">Cookies &amp; analytics</p>
+  <p class="bi-consent-text" data-zh="本站使用 Google Analytics 4 统计哪些文章对读者有帮助。在欧洲经济区、英国与瑞士，只有你同意后才会启用统计 cookie；选择「仅必要」则不会写入统计 cookie。可以随时在隐私政策页修改选择。">We use Google Analytics 4 to learn which engineering notes are useful. For visitors in the EEA, UK and Switzerland, analytics cookies are enabled only after you consent. Choosing "Essential only" keeps them off. You can change your choice at any time on the Privacy Policy page.</p>
+  <div class="bi-consent-actions">
+    <button type="button" data-bi-consent="denied" data-zh="仅必要">Essential only</button>
+    <button type="button" data-bi-consent="granted" data-zh="同意统计">Accept analytics</button>
+  </div>
+  <a class="bi-consent-link" href="/privacy/" data-zh="隐私政策">Privacy Policy</a>
+</div>
+
+<script>
+(function () {
+  var KEY = "bi4wms-consent-v2";
+  var bar = document.getElementById("bi-consent");
+  if (!bar) return;
+
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function remember(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+
+  function update(v) {
+    if (typeof window.gtag !== "function") return;
+    var ok = (v === "granted") ? "granted" : "denied";
+    window.gtag("consent", "update", {
+      "analytics_storage": ok,
+      "ad_storage": ok,
+      "ad_user_data": ok,
+      "ad_personalization": ok
+    });
+  }
+
+  /* 隐私政策页的「Cookie Settings」按钮调用它，随时可撤回/改选 */
+  window.bi4wmsOpenConsent = function () { bar.hidden = false; };
+
+  if (!saved()) bar.hidden = false;
+
+  bar.addEventListener("click", function (e) {
+    var btn = (e.target.closest) ? e.target.closest("[data-bi-consent]") : null;
+    if (!btn) return;
+    var v = btn.getAttribute("data-bi-consent");
+    remember(v);
+    update(v);
+    bar.hidden = true;
+  });
+})();
+</script>

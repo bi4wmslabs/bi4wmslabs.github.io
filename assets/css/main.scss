@@ -121,6 +121,67 @@ body { background: var(--bi-paper); }
 }
 
 /* ----------------------------------------------------------
+   Cookie 同意横幅（Consent Mode v2）：左下角，避开右下角语言切换按钮
+   ---------------------------------------------------------- */
+.bi-consent {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 9998;
+  box-sizing: border-box;
+  width: 420px;
+  max-width: calc(100vw - 36px);
+  padding: 1.05rem 1.15rem;
+  border: 1px solid var(--bi-line);
+  border-radius: .9rem;
+  background: #fff;
+  color: var(--bi-ink);
+  box-shadow: 0 10px 34px rgba(20, 28, 42, .16);
+  font-size: .84rem;
+  line-height: 1.55;
+}
+.bi-consent[hidden] { display: none !important; }
+.bi-consent-title { margin: 0 0 .35rem; font-size: .95rem; font-weight: 800; }
+.bi-consent-text { margin: 0 0 .8rem; color: var(--bi-muted); }
+.bi-consent-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .6rem; }
+.bi-consent-actions button,
+.bi-consent-reopen {
+  cursor: pointer;
+  padding: .42rem .85rem;
+  border: 1px solid var(--bi-line);
+  border-radius: .5rem;
+  background: var(--bi-soft);
+  color: var(--bi-ink);
+  font-size: .82rem;
+  font-weight: 700;
+}
+.bi-consent-actions button[data-bi-consent="granted"] {
+  background: var(--bi-accent);
+  border-color: var(--bi-accent);
+  color: #fff;
+}
+.bi-consent-link { font-size: .8rem; font-weight: 700; }
+:root[data-theme="dark"] .bi-consent {
+  background: #141a23;
+  border-color: #232a36;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .4);
+}
+:root[data-theme="dark"] .bi-consent-actions button {
+  background: #1e2632;
+  border-color: #2b3542;
+  color: #e6ebf2;
+}
+:root[data-theme="dark"] .bi-consent-actions button[data-bi-consent="granted"] {
+  background: var(--bi-accent);
+  border-color: var(--bi-accent);
+  color: #fff;
+}
+@media (max-width: 480px) {
+  .bi-consent { left: 12px; right: 12px; bottom: 68px; width: auto; }
+}
+@media print { .bi-consent { display: none !important; } }
+
+/* ----------------------------------------------------------
    切换按钮与双语块的样式由唯一引擎 v6（_layouts/default.html）
    在运行时注入；首屏预置样式见 _includes/head/custom.html。
    此处不再重复定义按钮外观。

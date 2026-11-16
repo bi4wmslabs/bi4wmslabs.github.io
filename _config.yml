@@ -90,6 +90,9 @@ footer:
     - label: "Contact"
       icon: "fas fa-fw fa-envelope"
       url: "mailto:bi4wms@gmail.com"
+    - label: "X (Twitter)"
+      icon: "fab fa-fw fa-twitter"
+      url: "https://twitter.com/WmsBi469558"
     - label: "Privacy Policy"
       icon: "fas fa-fw fa-shield-alt"
       url: "/privacy/"
@@ -99,11 +102,21 @@ footer:
     - label: "Licensing"
       icon: "fas fa-fw fa-file-contract"
       url: "/license/"
+    - label: "Cookie Settings"
+      icon: "fas fa-fw fa-cookie-bite"
+      url: "/privacy/#cookie-settings"
 atom_feed:
   hide: true
 
-# Google AdSense：申请通过、拿到 pub ID 后填入完整的 ca-pub-XXXXXXXXXXXXXXXX。
-# _includes/head/custom.html 会据此自动输出验证 meta 与 adsbygoogle.js；
-# 留空时站点完全不加载任何广告脚本，方便先完成内容与合规页面。
-# 同时记得把 ads.txt 里的占位 ID 换成 pub-XXXXXXXXXXXXXXXX（不带 ca- 前缀）。
+# Google AdSense：旧博客 bi4wms.github.io 用同一账号，真实 ID 为
+# ca-pub-9388766068727097（对应 ads.txt 里的 pub-9388766068727097）。
+# 目前保持为空，全站不加载 adsbygoogle.js；等你在 AdSense 后台把
+# bi4wmslabs.github.io 添加为站点并通过审核后，把 ID 填进下面这一行即可启用：
+# _includes/head/custom.html 会自动输出验证 meta 与广告脚本。
 adsense_client: ""
+
+# Google Analytics 4：沿用旧博客的 measurement ID。
+# _includes/head/custom.html 仅在 JEKYLL_ENV=production 时加载 gtag.js，
+# 并以 Google 同意模式 v2（analytics_storage 默认 denied）+ 双语同意横幅配合。
+# 本地构建与预览不会向 GA 发送数据。
+ga4_measurement_id: "G-3N2K440QKC"

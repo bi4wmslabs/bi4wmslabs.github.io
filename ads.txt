@@ -1,13 +1,12 @@
 # ads.txt — bi4wmslabs.github.io
 #
-# Google AdSense / 授权数字广告卖家声明文件。
-# 申请通过、拿到自己的 pub ID 之后，请把下面一行的占位 ID 替换成真实值，
-# 并删除行首的 "# "（每行必须是一条有效记录，注释行会被抓取程序忽略）：
+# 授权数字广告卖家声明（Authorized Digital Sellers）。
+# 下面的 pub ID 与旧博客 https://bi4wms.github.io 属于同一个 Google AdSense 账号，
+# 取自旧站仓库根目录的 ads.txt，并已在旧站线上生效。
 #
-# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
-#
-# 注意两点：
-# 1) ads.txt 里的 ID 形如 pub-1234567890123456（不带 ca- 前缀）；
-#    _config.yml 的 adsense_client 形如 ca-pub-1234567890123456。
-# 2) ads.txt 必须能从域名根路径访问（https://<域名>/ads.txt）。
-#    如果日后改用自有域名，请确认自定义域下也能访问到本文件。
+# 记录行必须以 google.com 开头且不能被注释；抓取程序会忽略所有 # 开头的行。
+# 本站目前不加载 adsbygoogle.js（_config.yml 的 adsense_client 保持为空），
+# 待在 AdSense 后台把 bi4wmslabs.github.io 添加为站点并通过审核后再开启投放。
+# 若日后改用自有域名，请确认自定义域的根路径下同样能访问本文件。
+
+google.com, pub-9388766068727097, DIRECT, f08c47fec0942fa0
