@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bi4wmslabs.github.io/sitemap.xml

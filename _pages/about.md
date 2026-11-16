@@ -27,7 +27,7 @@ Product pages should clearly state which files are open, which items are sold, a
 
 ### Contact
 
-For enquiries, reach the lab at [bi4wms@gmail.com](mailto:bi4wms@gmail.com).
+For enquiries, reach the lab at [bi4wms@gmail.com](mailto:bi4wms@gmail.com). More details are on the [Contact page](/contact/); see also the [Privacy Policy](/privacy/), [Disclaimer](/disclaimer/) and [Licensing & Store Policies](/license/).
 
 </div>
 
@@ -51,6 +51,6 @@ bi4wms 是一个独立的硬件工程实验室，专注于让开源项目更容�
 
 ### 联系
 
-咨询与合作请发邮件至 [bi4wms@gmail.com](mailto:bi4wms@gmail.com)。
+咨询与合作请发邮件至 [bi4wms@gmail.com](mailto:bi4wms@gmail.com)。详见[联系页面](/contact/)，以及[隐私政策](/privacy/)、[免责声明](/disclaimer/)与[授权与商店政策](/license/)。
 
 </div>

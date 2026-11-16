@@ -1,5 +1,5 @@
 title: "bi4wms"
-email: ""
+email: "bi4wms@gmail.com"
 description: "Open hardware projects, practical engineering notes, and carefully designed electronics."
 url: "https://bi4wmslabs.github.io"
 baseurl: ""
@@ -15,6 +15,24 @@ masthead_title: "BI4WMS LABS"
 subtitle: 
 include:
   - _pages
+# 只发布正式页面：README.md 是 Jekyll Starter 模板说明，wechat/ 是公众号中间产物，
+# 它们不应出现在公开站点上（AdSense 会把模板占位文字当成低质量内容）。
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - .gitignore
+  - .gitattributes
+  - .github
+  - wechat
+  - vendor
+  - node_modules
+  - .sass-cache
+  - .jekyll-cache
+  - .jekyll-metadata
+  - .DS_Store
+  - Thumbs.db
 markdown: kramdown
 remote_theme: "mmistakes/minimal-mistakes@4.28.1"
 plugins:
@@ -63,7 +81,7 @@ author:
       url: "https://github.com/bi4wms"
     - label: "Blog"
       icon: "fas fa-fw fa-globe"
-      url: "https://bi4wms.github.io"
+      url: "https://bi4wmslabs.github.io"
 footer:
   links:
     - label: "GitHub"
@@ -72,5 +90,20 @@ footer:
     - label: "Contact"
       icon: "fas fa-fw fa-envelope"
       url: "mailto:bi4wms@gmail.com"
+    - label: "Privacy Policy"
+      icon: "fas fa-fw fa-shield-alt"
+      url: "/privacy/"
+    - label: "Disclaimer"
+      icon: "fas fa-fw fa-info-circle"
+      url: "/disclaimer/"
+    - label: "Licensing"
+      icon: "fas fa-fw fa-file-contract"
+      url: "/license/"
 atom_feed:
   hide: true
+
+# Google AdSense：申请通过、拿到 pub ID 后填入完整的 ca-pub-XXXXXXXXXXXXXXXX。
+# _includes/head/custom.html 会据此自动输出验证 meta 与 adsbygoogle.js；
+# 留空时站点完全不加载任何广告脚本，方便先完成内容与合规页面。
+# 同时记得把 ads.txt 里的占位 ID 换成 pub-XXXXXXXXXXXXXXXX（不带 ca- 前缀）。
+adsense_client: ""

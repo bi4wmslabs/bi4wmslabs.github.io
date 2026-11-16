@@ -1,0 +1,16 @@
+# Minimal Mistakes 主导航。此前站点没有 navigation data，
+# masthead 的 visible-links 为空，AdSense 审核会看到「无导航」。
+# 新增条目时同步在 _layouts/default.html 的 DICT 里补中文词条。
+main:
+  - title: "Home"
+    url: /
+  - title: "Projects"
+    url: /projects/
+  - title: "Shop"
+    url: /shop/
+  - title: "Notes"
+    url: /notes/
+  - title: "About"
+    url: /about/
+  - title: "Contact"
+    url: /contact/

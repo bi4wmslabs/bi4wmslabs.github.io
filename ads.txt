@@ -1,0 +1,13 @@
+# ads.txt — bi4wmslabs.github.io
+#
+# Google AdSense / 授权数字广告卖家声明文件。
+# 申请通过、拿到自己的 pub ID 之后，请把下面一行的占位 ID 替换成真实值，
+# 并删除行首的 "# "（每行必须是一条有效记录，注释行会被抓取程序忽略）：
+#
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+#
+# 注意两点：
+# 1) ads.txt 里的 ID 形如 pub-1234567890123456（不带 ca- 前缀）；
+#    _config.yml 的 adsense_client 形如 ca-pub-1234567890123456。
+# 2) ads.txt 必须能从域名根路径访问（https://<域名>/ads.txt）。
+#    如果日后改用自有域名，请确认自定义域下也能访问到本文件。

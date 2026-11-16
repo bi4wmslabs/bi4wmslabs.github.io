@@ -29,3 +29,11 @@
   document.documentElement.setAttribute("lang", lang === "zh" ? "zh-CN" : "en");
 })();
 </script>
+
+<!-- Google AdSense：仅在 _config.yml 里填了 adsense_client 时才输出。
+     空值 = 不加载任何广告脚本，便于先补齐内容与合规页面；
+     申请通过后填 ca-pub-XXXXXXXXXXXXXXXX，此处自动加上验证 meta 与广告脚本。 -->
+{% if site.adsense_client and site.adsense_client != "" %}
+<meta name="google-adsense-account" content="{{ site.adsense_client }}">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.adsense_client }}" crossorigin="anonymous"></script>
+{% endif %}
