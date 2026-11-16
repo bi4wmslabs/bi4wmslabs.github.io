@@ -1,0 +1,29 @@
+{%- comment -%}
+  笔记索引分组块（中英双语）。
+  参数：id / key(series 字段值) / en / zh / desc_en / desc_zh / index_en / index_zh / index_url
+  data-zh 由全站唯一引擎 v6 处理；OCTET 组额外显示系列目录链接。
+{%- endcomment -%}
+{%- assign items = site.posts | where: "series", include.key | sort: "series_no" -%}
+<section class="bi-notes-group" id="{{ include.id }}">
+  <h2 data-zh="{{ include.zh }}">{{ include.en }}</h2>
+  <p class="bi-group-desc" data-zh="{{ include.desc_zh }}">{{ include.desc_en }}</p>
+  {%- if include.index_url and include.index_url != "" -%}
+  <p class="bi-group-index"><a href="{{ include.index_url }}" data-zh="{{ include.index_zh }}">{{ include.index_en }}</a></p>
+  {%- endif -%}
+  <div class="bi-post-list">
+    {%- for post in items -%}
+      <article class="bi-post-row">
+        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>
+        <div>
+          {%- if post.series_total > 1 -%}
+          <p class="bi-post-series" data-zh="第 {{ post.series_no }} 篇 / 共 {{ post.series_total }} 篇">Part {{ post.series_no }} of {{ post.series_total }}</p>
+          {%- endif -%}
+          <h3>
+            <a href="{{ post.url | relative_url }}"{% if post.title_zh %} data-zh="{{ post.title_zh | escape }}"{% endif %}>{{ post.title }}</a>
+          </h3>
+          <p{% if post.excerpt_zh %} data-zh="{{ post.excerpt_zh | escape }}"{% endif %}>{{ post.excerpt | strip_html | truncate: 180 }}</p>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+</section>

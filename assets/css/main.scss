@@ -73,6 +73,13 @@ body { background: var(--bi-paper); }
 .bi-post-row h2, .bi-post-row h3 { margin: 0 0 .4rem; font-size: 1.2rem; }
 .bi-post-row h2 a, .bi-post-row h3 a { text-decoration: none; }
 .bi-post-row p { color: var(--bi-muted); margin: 0; font-size: .9rem; }
+/* 笔记索引：按系列分组后的组标题、说明与首页的系列快捷入口 */
+.bi-notes-group { margin: 3rem 0 0; scroll-margin-top: 5rem; }
+.bi-notes-group h2 { margin: 0 0 .35rem; font-size: 1.5rem; letter-spacing: -.035em; }
+.bi-group-desc { color: var(--bi-muted); font-size: .92rem; line-height: 1.6; margin: 0 0 1.2rem; }
+.bi-group-index { font-size: .85rem; font-weight: 700; margin: -.5rem 0 1.2rem; }
+.bi-series-links { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .9rem; margin-top: 1.2rem; font-size: .85rem; color: var(--bi-muted); }
+.bi-series-links a { font-weight: 700; }
 
 /* OCTET 系列标识：正文顶部的系列主标题 + Notes 列表里的系列标签 */
 .bi-series {
