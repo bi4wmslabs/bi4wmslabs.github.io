@@ -61,7 +61,7 @@ The web UI is fully bilingual (EN/中文 via the selector at the top). The setti
 
 Hardware v1 (LED board, silkscreen film, support plate) is built and validated; firmware is in daily use.
 
-**Source code:** [github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH) — the full fork (ZH10x11 layout, weather back-ends, Chinese web UI), forked from [ESPWortuhr/Multilayout-ESP-Wordclock](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) (BSD-3-Clause).
+**Source code:** [github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH) — the full fork (ZH10x11 layout, weather back-ends, Chinese web UI), forked from [ESPWortuhr/Multilayout-ESP-Wordclock](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock) (BSD-3-Clause). Firmware is open source; hardware design files (silkscreen SVGs, 3D models, laser-cutting templates, schematics) are not published.
 
 </div>
 
@@ -109,6 +109,6 @@ Hardware v1 (LED board, silkscreen film, support plate) is built and validated; 
 
 硬件第一版（灯板、丝印板、隔光板）已制作并验证通过，固件在日常使用中。
 
-**源码仓库**：[github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH)——包含本分支全部改动（ZH10x11 布局、天气后端、中文界面），基于 [ESPWortuhr/Multilayout-ESP-Wordclock](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock)（BSD-3-Clause）二次开发。
+**源码仓库**：[github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH](https://github.com/bi4wmslabs/Multilayout-ESP-Wordclock-ZH)——包含本分支全部改动（ZH10x11 布局、天气后端、中文界面），基于 [ESPWortuhr/Multilayout-ESP-Wordclock](https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock)（BSD-3-Clause）二次开发。本仓库仅开源固件；丝印 SVG、3D 模型、激光切割模板、电路图等硬件设计文件不随仓库发布。
 
 </div>
