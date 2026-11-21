@@ -26,7 +26,7 @@ layout: home
 
 <section class="bi-notes-group" id="standalone">
   <h2 data-zh="其他工程实践">Other Build Notes</h2>
-  <p class="bi-group-desc" data-zh="便携示波器 / 逻辑分析仪与 KV4P-HT 业余无线电配件的独立制作记录。">Standalone build logs for a portable oscilloscope / logic analyzer and a KV4P-HT ham radio accessory.</p>
+  <p class="bi-group-desc" data-zh="独立制作记录与产品介绍：便携示波器 / 逻辑分析仪、KV4P-HT 业余无线电配件，以及中文字钟的功能介绍。">Standalone build logs and product notes: a portable oscilloscope / logic analyzer, a KV4P-HT ham radio accessory, and the Chinese word clock in everyday use.</p>
   <div class="bi-post-list">
     {% assign standalone = "" | split: "," %}
     {% for post in site.posts %}{% unless post.series %}{% assign standalone = standalone | push: post %}{% endunless %}{% endfor %}
